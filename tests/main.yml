@@ -1,2 +1,47 @@
 ---
 # Tasks for testing role
+
+- name: Configure docker sandbox environment
+  hosts: localhost
+  roles:
+    - role: amtega.docker_presets
+      docker_presets_images_json_query: >-
+        [? starts_with(name, `centos-6`)
+           || starts_with(name, `centos-7`) ]
+  tags:
+    - sandbox
+
+- name: Run idempotence test
+  hosts: localhost
+  roles:
+    - role: amtega.docker_sandbox
+      docker_sandbox_state: started
+  tags:
+    - sandbox
+
+- name: Prepare testing environment
+  hosts: docker_sandbox_containers
+  tasks:
+    - name: Setup packages
+      package:
+        name:
+          - crontabs
+  tags:
+    - prepare
+    - idempotence
+
+- name: Test crontab role
+  hosts: docker_sandbox_containers
+  roles:
+      - amtega.cis
+  tags:
+    - idempotence
+
+- name: Cleanup docker sandbox
+  hosts: localhost
+  roles:
+    - role: amtega.docker_sandbox
+      docker_sandbox_state: absent
+  tags:
+    - cleanup
+    - sandbox

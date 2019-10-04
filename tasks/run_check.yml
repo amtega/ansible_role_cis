@@ -1,0 +1,16 @@
+---
+# Role tasks
+
+- block:
+    - include_tasks: >-
+        audit/check_{{ cis_audit_item | regex_replace('\.', '_' ) }}.yml
+
+    - name: Save audit task result
+      set_fact:
+        cis_results_fact: >-
+          {{ cis_results_fact | default([]) + [ result_dict ] }}
+      vars:
+        result_dict:
+          "name": "{{ cis_audit_item }}"
+          "passed": >-
+            {{ not cis_check_result | default({ "failed": "yes" }) is failed }}

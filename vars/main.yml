@@ -1,2 +1,9 @@
 ---
 # Role variables
+
+# Suppoert audit items
+
+cis_supported_audit_checks:
+  - 3.2.2
+  - 3.2.3
+  - 5.1.2

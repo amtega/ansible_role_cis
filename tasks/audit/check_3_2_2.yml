@@ -1,0 +1,8 @@
+---
+
+- name: Ensure ICMP redirects are not accepted
+  assert:
+    that:
+      - ("net.ipv4.conf.all.accept_redirects = 0" in cis_kernel_params)
+      - ("net.ipv4.conf.default.accept_redirects = 0" in cis_kernel_params)
+  register: cis_check_result
