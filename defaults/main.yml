@@ -1,2 +1,18 @@
 ---
 # Role default lower priority variables
+
+# List of strings with the audit checks to run. Each item isthe chapter number
+# in the CIS guide
+#
+# Example:
+#
+# cis_audit:
+#   - 3.2.2
+#   - 3.2.3
+#   - 5.1.2
+
+cis_audit: "{{ cis_supported_audit_checks }}"
+
+# Indicate if role must fail if an audit item is not fulfiled
+
+cis_fail_at_non_fulfilment: no

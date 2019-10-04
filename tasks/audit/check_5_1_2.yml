@@ -1,0 +1,15 @@
+---
+
+- name: Read permissions of /etc/crontab
+  stat:
+    path: /etc/crontab
+  register: cis_stat_etc_crontab_result
+
+- name: Ensure permissions on /etc/crontab are configured
+  assert:
+    that: >-
+      not cis_stat_etc_crontab_result.stat.exists
+      or (cis_stat_etc_crontab_result.stat.pw_name == "root"
+          and cis_stat_etc_crontab_result.stat.gr_name == "root"
+          and cis_stat_etc_crontab_result.stat.mode == "0700")
+  register: cis_check_result

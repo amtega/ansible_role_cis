@@ -1,2 +1,51 @@
 ---
 # Role tasks
+
+# - include_role:
+#     name: amtega.check_platform
+#   vars:
+#     check_platform_distributions:
+#       centos: 6
+#       rhel: 6
+
+- block:
+    - name: Setup fact with supported audit checks
+      set_fact:
+        cis_supported_audit_checks_fact: "{{ cis_supported_audit_checks }}"
+
+    - name: Gather kernel parameters
+      command: sysctl -a
+      changed_when: no
+      register: cis_sysctl_result
+
+    - name: Setup fact with kernel parameters
+      set_fact:
+        cis_kernel_params: "{{ cis_sysctl_result.stdout_lines }}"
+
+    - block:
+        - name: Run audit tasks
+          include_tasks: run_check.yml
+          loop: "{{ cis_audit }}"
+          loop_control:
+            loop_var: cis_audit_item
+            label: "CIS audit {{ cis_audit_item }}"
+      ignore_errors: "{{ not cis_fail_at_non_fulfilment }}"
+
+    - debug: var=passed
+      vars:
+        passed: >-
+          {{ cis_results_fact
+             | selectattr("passed", "equalto", true)
+             | map(attribute="name")
+             | list }}
+
+    - debug: var=not_passed
+      vars:
+        not_passed: >-
+          {{ cis_results_fact
+             | selectattr("passed", "equalto", false)
+             | map(attribute="name")
+             | list }}
+
+  tags:
+    - role::cis
