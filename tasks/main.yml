@@ -22,6 +22,14 @@
       set_fact:
         cis_kernel_params: "{{ cis_sysctl_result.stdout_lines }}"
 
+    - name: Gather sshd configuration
+      command: sshd -T
+      register: cis_sshd_config_result
+
+    - name: Setup fact with sshd configuration
+      set_fact:
+        cis_sshd_config: "{{ cis_sshd_config_result.stdout_lines }}"
+
     - block:
         - name: Run audit tasks
           include_tasks: run_check.yml

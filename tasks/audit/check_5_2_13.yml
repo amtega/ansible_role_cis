@@ -1,0 +1,15 @@
+---
+
+- name: Ensure SSH LoginGraceTime is set to one minute or less
+  assert:
+    quiet: "{{ cis_quiet_assertions }}"
+    that: logingracetime_value | int <= 60
+  register: cis_check_result
+  no_log: "{{ cis_no_log }}"
+  vars:
+    logingracetime_value: >-
+      {{ cis_sshd_config
+         | select("search", "logingracetime")
+         | list
+         | first
+         | regex_replace("logingracetime (.*)", "\1") }}

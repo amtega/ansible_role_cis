@@ -1,0 +1,15 @@
+---
+
+- name: Ensure SSH MaxAuthTries is set to 4 or less
+  assert:
+    quiet: "{{ cis_quiet_assertions }}"
+    that: maxauthtries_value | int <= 4
+  register: cis_check_result
+  no_log: "{{ cis_no_log }}"
+  vars:
+    maxauthtries_value: >-
+      {{ cis_sshd_config
+         | select("search", "maxauthtries")
+         | list
+         | first
+         | regex_replace("maxauthtries (.*)", "\1") }}

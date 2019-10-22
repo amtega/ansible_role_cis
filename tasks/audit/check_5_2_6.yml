@@ -1,0 +1,8 @@
+---
+
+- name: Ensure SSH IgnoreRhosts is enabled
+  assert:
+    quiet: "{{ cis_quiet_assertions }}"
+    that: '"ignorerhosts yes" in cis_sshd_config'
+  register: cis_check_result
+  no_log: "{{ cis_no_log }}"

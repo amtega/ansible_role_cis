@@ -2,7 +2,9 @@
 
 - name: Ensure ICMP redirects are not accepted
   assert:
+    quiet: "{{ cis_quiet_assertions }}"
     that:
       - ("net.ipv4.conf.all.accept_redirects = 0" in cis_kernel_params)
       - ("net.ipv4.conf.default.accept_redirects = 0" in cis_kernel_params)
   register: cis_check_result
+  no_log: "{{ cis_no_log }}"
