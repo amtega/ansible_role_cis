@@ -4,12 +4,15 @@
   stat:
     path: /etc/crontab
   register: cis_stat_etc_crontab_result
+  no_log: "{{ cis_no_log }}"
 
 - name: Ensure permissions on /etc/crontab are configured
   assert:
+    quiet: "{{ cis_quiet_assertions }}"
     that: >-
       not cis_stat_etc_crontab_result.stat.exists
       or (cis_stat_etc_crontab_result.stat.pw_name == "root"
           and cis_stat_etc_crontab_result.stat.gr_name == "root"
           and cis_stat_etc_crontab_result.stat.mode == "0700")
   register: cis_check_result
+  no_log: "{{ cis_no_log }}"

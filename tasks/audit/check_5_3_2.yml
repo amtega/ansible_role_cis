@@ -1,0 +1,41 @@
+---
+
+- name: Read /etc/pam.d/password-auth
+  command: cat /etc/pam.d/password-auth
+  changed_when: no
+  register: cis_read_etc_pam_d_password_auth_result
+  no_log: "{{ cis_no_log }}"
+
+- name: Read /etc/pam.d/system-auth
+  command: cat /etc/pam.d/system-auth
+  changed_when: no
+  register: cis_read_etc_pam_d_system_auth_result
+  no_log: "{{ cis_no_log }}"
+
+- name: Ensure lockout for failed password attempts is configured
+  assert:
+    quiet: yes
+    that: item is search(full_pattern)
+  loop:
+    - "{{ cis_read_etc_pam_d_password_auth_result.stdout }}"
+    - "{{ cis_read_etc_pam_d_system_auth_result.stdout }}"
+  loop_control:
+    index_var: index
+    label: "{{ index }}"
+  register: cis_check_result
+  no_log: "{{ cis_no_log }}"
+  vars:
+    failock_pattern_1: >-
+      auth +required +pam_faillock.so +preauth +audit +silent +deny=[0-9]+
+      +unlock_time=[0-9]+
+    failock_pattern_2: >-
+      auth +[default=die] +pam_faillock.so +authfail +audit +deny=[0-9]+
+      +unlock_time=[0-9]+
+    pam_unix_pattern: >-
+      "auth +[success=1 +default=bad] +pam_unix.so"
+    full_pattern: >-
+      {{ failock_pattern_1
+         + ".*"
+         + pam_unix_pattern
+         + ".*"
+         + failock_pattern_2 }}

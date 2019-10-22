@@ -1,0 +1,16 @@
+---
+
+- name: Read /boot/grub2/grub.cfg
+  command: cat /boot/grub2/grub.cfg
+  changed_when: no
+  register: cis_read_boot_grub2_grub_result
+  no_log: "{{ cis_no_log }}"
+
+- name: Ensure bootloader password is set
+  assert:
+    quiet: yes
+    that: >-
+      cis_read_boot_grub2_grub_result.stdout_lines
+      | select("search", "^GRUB2_PASSWORD")
+      | list
+      | length != 0

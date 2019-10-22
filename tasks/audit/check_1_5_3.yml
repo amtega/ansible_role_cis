@@ -1,0 +1,8 @@
+---
+
+- name: Ensure address space layout randomization (ASLR) is enabled
+  assert:
+    quiet: "{{ cis_quiet_assertions }}"
+    that: '"kernel.randomize_va_space = 2" in cis_kernel_params'
+  register: cis_check_result
+  no_log: "{{ cis_no_log }}"

@@ -7,6 +7,7 @@ This is an [Ansible](http://www.ansible.com) role which runs CIS RHEL 7 security
 A list of all the default variables for this role is available in `defaults/main.yml`. The role setup the following facts:
 
 - `cis_kernel_params`: list of strings the CIS benchmarks supported
+- `cis_sshd_config`: list of strins with sshd config
 - `cis_results_fact`: list of dicts with the results of the benchmarks
 
 ## Example Playbook
