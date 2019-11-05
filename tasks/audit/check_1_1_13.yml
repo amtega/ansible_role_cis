@@ -1,0 +1,14 @@
+---
+
+- name: Ensure separate partition exists for /home
+  shell: >-
+    set -o pipefail
+    # noqa 303
+    warn=no mount | grep '^/[^ ]* on /home type '
+  environment:
+    LANG:
+  register: cis_check_result
+  failed_when: >-
+    cis_check_result.rc != 0
+    or cis_check_result.stdout | length == 0
+  changed_when: false
