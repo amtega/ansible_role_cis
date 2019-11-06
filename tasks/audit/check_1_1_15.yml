@@ -1,0 +1,7 @@
+---
+
+- name: Ensure nodev option set on /dev/shm partition
+  assert:
+    that:
+      - ('nodev' in (ansible_facts | json_query("mounts[?mount=='/dev/shm'].options") | default('') | join('')))
+  register: cis_check_result
