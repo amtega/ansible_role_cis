@@ -1,0 +1,14 @@
+---
+
+- name: Test to ensure prelink is disabled
+  yum:
+    name: prelink
+    state: present
+  register: prelink_check_result
+  check_mode: yes
+
+- name: Ensure prelink is disabled
+  assert:
+    that:
+      - prelink_check_result is changed
+  register: cis_check_result
