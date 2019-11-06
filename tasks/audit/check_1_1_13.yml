@@ -5,4 +5,3 @@
     that:
       - ansible_facts | json_query("mounts[?mount=='/home'].mount") | length > 0
   register: cis_check_result
-  
