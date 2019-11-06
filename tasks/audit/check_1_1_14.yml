@@ -1,7 +1,7 @@
 ---
 
-- name: Ensure separate partition exists for /home
-  assert:
-    that:
-      - ('nodev' in (ansible_facts | json_query("mounts[?mount=='/home'].options") | default('') | join('')))
-  register: cis_check_result
+- name: Ensure nodev option set on /home partition
+  vars:
+    check_mount_path: /home
+    check_option: nodev
+  include_tasks: verify_mount_option.yml
