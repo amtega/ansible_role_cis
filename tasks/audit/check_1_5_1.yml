@@ -1,0 +1,27 @@
+---
+
+- name: Gather data to ensure core dumps are restricted (limits)
+  shell: grep 'hard core' /etc/security/limits.conf /etc/security/limits.d/*
+  become: yes
+  changed_when: false
+  register: cis_gather_data_limits_result
+
+- name: Gather data to ensure core dumps are restricted (sysctl)
+  shell: sysctl fs.suid_dumpable
+  become: yes
+  changed_when: false
+  register: cis_gather_data_sysctl_result
+
+- name: Gather data to ensure core dumps are restricted (sysctl.conf)
+  shell: grep 'hard core' /etc/security/limits.conf /etc/security/limits.d/*
+  become: yes
+  changed_when: false
+  register: cis_gather_data_sysctl_conf_result
+
+- name: Ensure core dumps are restricted
+  assert:
+    that:
+      - cis_gather_data_limits_result.stdout | length == 0
+      - cis_gather_data_sysctl_result.stdout == 'fs.suid_dumpable = 0'
+      - cis_gather_data_sysctl_conf_result.stdout == 'fs.suid_dumpable = 0'
+  register: cis_check_result

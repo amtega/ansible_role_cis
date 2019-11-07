@@ -1,6 +1,6 @@
 ---
 
-- name: Read sticky bit on all world-writeable directories
+- name: Gather data to ensure sticky bit on all world-writeable directories
   shell: |-
     set -o pipefail # Raise internal pipe errors
     df --local -P \
@@ -12,9 +12,9 @@
   # | xargs -I '{}' find '{}' -xdev -type d \( -perm -0002 -a ! -perm -1000 \)
   become: yes
   changed_when: false
-  register: sticky_bit_result
+  register: cis_gather_data_result
 
 - name: Ensure sticky bit is set on all world-writable directories
   assert:
-    that: sticky_bit_result.stdout | length == 0
+    that: cis_gather_data_result.stdout | length == 0
   register: cis_check_result
