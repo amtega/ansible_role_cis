@@ -1,0 +1,18 @@
+---
+
+- name: Gather data to Ensure no unconfined daemons exist
+  shell: |-
+    set -o pipefail # Raise internal pipe errors
+    ps -eZ \
+    | egrep "initrc" \
+    | egrep -vw "tr|ps|egrep|bash|awk" \
+    | tr ':' ' ' \
+    | awk '{ print $NF }'
+  become: yes
+  changed_when: false
+  register: cis_gather_data_result
+
+- name: Ensure no unconfined daemons exist
+  assert:
+    that: cis_gather_data_result.stdout | length == 0
+  register: cis_check_result
