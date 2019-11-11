@@ -1,16 +1,16 @@
 ---
 
-- name: Test to ensure prelink is disabled
+- name: Gather data to to ensure prelink is disabled
   yum:
     name: prelink
     state: absent
-  register: prelink_check_result
+  register: cis_prelink_check_result
   check_mode: yes
 
 - name: Ensure prelink is disabled
   assert:
     quiet: "{{ cis_quiet_assertions }}"
     that:
-      - prelink_check_result is not changed
+      - cis_prelink_check_result is not changed
   register: cis_check_result
   no_log: "{{ cis_no_log }}"

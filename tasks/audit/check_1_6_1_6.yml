@@ -1,6 +1,6 @@
 ---
 
-- name: Gather data to Ensure no unconfined daemons exist
+- name: Gather data to ensure no unconfined daemons exist
   shell: |-
     set -o pipefail # Raise internal pipe errors
     ps -eZ \

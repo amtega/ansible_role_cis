@@ -3,5 +3,5 @@
 - name: Ensure nosuid option set on /dev/shm partition
   vars:
     check_mount_path: /dev/shm
-    check_option: nosuid
-  include_tasks: verify_mount_option.yml
+    check_mount_option: nosuid
+  include_tasks: ../common/check_mount_option.yml

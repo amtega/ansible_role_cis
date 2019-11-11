@@ -1,3 +1,5 @@
+---
+
 - name: Gather data to ensure ntp is configured - ntp.conf - restrict
   command: /usr/bin/grep "^restrict" /etc/ntp.conf
   become: yes
@@ -26,19 +28,28 @@
   vars:
     list_restrict_4: >-
       cis_gather_data_restrict_result.stdout_lines
-      | select('search', '^restrict\\s+(-4\\s+)?default(\\s+(kod|nomodify|notrap|nopeer|noquery)){5}')
+      | select('search', regexp_list_restrict_4)
       | list
     list_restrict_6: >-
       cis_gather_data_restrict_result.stdout_lines
-      | select('search', '^restrict\\s+-6\\s+?default(\\s+(kod|nomodify|notrap|nopeer|noquery)){5}')
+      | select('search', regexp_list_restrict_6)
       | list
-    line_restrict_4: "{{ (list_restrict_4 | length == 1) | ternary(list_restrict_4[0], '') }}"
-    line_restrict_6: "{{ (list_restrict_6 | length == 1) | ternary(list_restrict_6[0], '') }}"
+    line_restrict_4: >-
+      {{ (list_restrict_4 | length == 1) | ternary(list_restrict_4[0], '') }}
+    line_restrict_6: >-
+      {{ (list_restrict_6 | length == 1) | ternary(list_restrict_6[0], '') }}
     words: restrict default kod nomodify notrap nopeer noquery
   assert:
     quiet: "{{ cis_quiet_assertions }}"
     that:
-      - line_restrict_4 is cis_search_words(words) or line_restrict_4 is cis_search_words(words + ' -4')
+      - >-
+        line_restrict_4 is cis_search_words(words)
+        or line_restrict_4 is cis_search_words(words + ' -4')
       - line_restrict_6 is cis_search_words(words + ' -6')
   register: cis_check_result
   no_log: "{{ cis_no_log }}"
+  vars:
+    regexp_list_restrict_4: >-
+      ^restrict\\s+(-4\\s+)?default(\\s+(kod|nomodify|notrap|nopeer|noquery)){5}
+    regexp_list_restrict_6: >-
+      ^restrict\\s+-6\\s+?default(\\s+(kod|nomodify|notrap|nopeer|noquery)){5}
