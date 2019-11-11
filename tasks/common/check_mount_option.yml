@@ -7,10 +7,10 @@
     quiet: "{{ cis_quiet_assertions }}"
     that:
       - >-
-      (check_mount_option
-       in (ansible_facts
-           | json_query("mounts[?mount=='" + check_mount_path + "'].options")
-           | default('')
-           | join('')))
+        (check_mount_option
+         in (ansible_facts
+             | json_query("mounts[?mount=='" + check_mount_path + "'].options")
+             | default('')
+             | join('')))
   register: cis_check_result
   no_log: "{{ cis_no_log }}"
