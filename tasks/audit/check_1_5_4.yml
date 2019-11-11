@@ -9,6 +9,8 @@
 
 - name: Ensure prelink is disabled
   assert:
+    quiet: "{{ cis_quiet_assertions }}"
     that:
       - prelink_check_result is not changed
   register: cis_check_result
+  no_log: "{{ cis_no_log }}"

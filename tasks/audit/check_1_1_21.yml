@@ -16,5 +16,7 @@
 
 - name: Ensure sticky bit is set on all world-writable directories
   assert:
+    quiet: "{{ cis_quiet_assertions }}"
     that: cis_gather_data_result.stdout | length == 0
   register: cis_check_result
+  no_log: "{{ cis_no_log }}"

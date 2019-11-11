@@ -20,8 +20,10 @@
 
 - name: Ensure core dumps are restricted
   assert:
+    quiet: "{{ cis_quiet_assertions }}"
     that:
       - cis_gather_data_limits_result.stdout | length == 0
       - cis_gather_data_sysctl_result.stdout == 'fs.suid_dumpable = 0'
       - cis_gather_data_sysctl_conf_result.stdout == 'fs.suid_dumpable = 0'
   register: cis_check_result
+  no_log: "{{ cis_no_log }}"

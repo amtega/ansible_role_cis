@@ -36,7 +36,9 @@
     line_restrict_6: "{{ (list_restrict_6 | length == 1) | ternary(list_restrict_6[0], '') }}"
     words: restrict default kod nomodify notrap nopeer noquery
   assert:
+    quiet: "{{ cis_quiet_assertions }}"
     that:
       - line_restrict_4 is cis_search_words(words) or line_restrict_4 is cis_search_words(words + ' -4')
       - line_restrict_6 is cis_search_words(words + ' -6')
   register: cis_check_result
+  no_log: "{{ cis_no_log }}"

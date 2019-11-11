@@ -13,7 +13,9 @@
 
 - name: Ensure X Window System is not installed
   assert:
+    quiet: "{{ cis_quiet_assertions }}"
     that:
       - x_check_result is not changed
       - x_check_result is success
   register: cis_check_result
+  no_log: "{{ cis_no_log }}"

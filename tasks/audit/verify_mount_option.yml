@@ -1,5 +1,7 @@
 - name: "Ensure {{ check_option }} option set on {{ check_mount_path }} partition"
   assert:
+    quiet: "{{ cis_quiet_assertions }}"
     that:
       - (check_option in (ansible_facts | json_query("mounts[?mount=='" + check_mount_path + "'].options") | default('') | join('')))
   register: cis_check_result
+  no_log: "{{ cis_no_log }}"

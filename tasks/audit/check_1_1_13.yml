@@ -2,6 +2,8 @@
 
 - name: Ensure separate partition exists for /home
   assert:
+    quiet: "{{ cis_quiet_assertions }}"
     that:
       - ansible_facts | json_query("mounts[?mount=='/home'].mount") | length > 0
   register: cis_check_result
+  no_log: "{{ cis_no_log }}"
