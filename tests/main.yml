@@ -26,6 +26,13 @@
       package:
         name:
           - crontabs
+          - openssh-server
+          - "{{ grub }}"
+      vars:
+        grub: >-
+          {{ (ansible_facts.distribution_major_version
+              is version("7", "<") | ternary("grub", "grub2") )}}
+
   tags:
     - prepare
     - idempotence

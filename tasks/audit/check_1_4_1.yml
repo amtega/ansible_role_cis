@@ -1,0 +1,30 @@
+---
+
+- name: Read permissions of /boot/grub2/grub.cfg
+  stat:
+    path: /boot/grub2/grub.cfg
+  register: cis_stat_boot_grub2_grub_result
+  no_log: "{{ cis_no_log }}"
+
+- name: Read permissions of /boot/grub2/user.cfg
+  stat:
+    path: /boot/grub2/user.cfg
+  register: cis_stat_boot_grub2_user_result
+  no_log: "{{ cis_no_log }}"
+
+- name: Ensure permissions on bootloader config are configured
+  assert:
+    quiet: "{{ cis_quiet_assertions }}"
+    that:
+      - >-
+        not cis_stat_boot_grub2_grub_result.stat.exists
+        or (cis_stat_boot_grub2_grub_result.stat.pw_name == "root"
+            and cis_stat_boot_grub2_grub_result.stat.gr_name == "root"
+            and cis_stat_boot_grub2_grub_result.stat.mode == "0700")
+      - >-
+        not cis_stat_boot_grub2_user_result.stat.exists
+        or (cis_stat_boot_grub2_user_result.stat.pw_name == "root"
+            and cis_stat_boot_grub2_user_result.stat.gr_name == "root"
+            and cis_stat_boot_grub2_user_result.stat.mode == "0700")
+  register: cis_check_result
+  no_log: "{{ cis_no_log }}"

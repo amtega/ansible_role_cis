@@ -1,0 +1,18 @@
+---
+
+- name: Read permissions of /etc/cron.daily
+  stat:
+    path: /etc/cron.daily
+  register: cis_stat_etc_cron_daily_result
+  no_log: "{{ cis_no_log }}"
+
+- name: Ensure permissions on /etc/cron.daily are configured
+  assert:
+    quiet: "{{ cis_quiet_assertions }}"
+    that: >-
+      not cis_stat_etc_cron_daily_result.stat.exists
+      or (cis_stat_etc_cron_daily_result.stat.pw_name == "root"
+          and cis_stat_etc_cron_daily_result.stat.gr_name == "root"
+          and cis_stat_etc_cron_daily_result.stat.mode == "0700")
+  register: cis_check_result
+  no_log: "{{ cis_no_log }}"

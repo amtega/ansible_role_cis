@@ -1,0 +1,18 @@
+---
+
+- name: Read permissions of /etc/cron.weekly
+  stat:
+    path: /etc/cron.weekly
+  register: cis_stat_etc_cron_weekly_result
+  no_log: "{{ cis_no_log }}"
+
+- name: Ensure permissions on /etc/cron.weekly are configured
+  assert:
+    quiet: "{{ cis_quiet_assertions }}"
+    that: >-
+      not cis_stat_etc_cron_weekly_result.stat.exists
+      or (cis_stat_etc_cron_weekly_result.stat.pw_name == "root"
+          and cis_stat_etc_cron_weekly_result.stat.gr_name == "root"
+          and cis_stat_etc_cron_weekly_result.stat.mode == "0700")
+  register: cis_check_result
+  no_log: "{{ cis_no_log }}"

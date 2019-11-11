@@ -1,0 +1,8 @@
+---
+
+- name: Ensure SSH LogLevel is set to INFO
+  assert:
+    quiet: "{{ cis_quiet_assertions }}"
+    that: '"loglevel INFO" in cis_sshd_config'
+  register: cis_check_result
+  no_log: "{{ cis_no_log }}"

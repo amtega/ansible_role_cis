@@ -16,3 +16,11 @@ cis_audit: "{{ cis_supported_audit_checks }}"
 # Indicate if role must fail if an audit item is not fulfiled
 
 cis_fail_at_non_fulfilment: no
+
+# Indicate if assertion checks must be quiet
+
+cis_quiet_assertions: yes
+
+# Activa no_log on check tasks
+
+cis_no_log: yes
