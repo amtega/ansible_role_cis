@@ -1,5 +1,6 @@
 # Make coding more python3-ish
-from __future__ import (absolute_import, division, print_function)
+from __future__ import absolute_import, division, print_function
+
 __metaclass__ = type
 
 from crypt import crypt
@@ -20,10 +21,9 @@ def cis_search_words(string, words):
     set_words = set(words.split(" "))
     return set_string == set_words
 
+
 class TestModule:
     """ Ansible tests """
 
     def tests(self):
-        return {
-            'cis_search_words': cis_search_words
-        }
+        return {"cis_search_words": cis_search_words}
