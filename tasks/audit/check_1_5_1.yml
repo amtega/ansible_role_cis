@@ -2,7 +2,7 @@
 
 - name: Gather data to ensure core dumps are restricted - limits
   command: >-
-    /usr/bin/grep 'hard core' /etc/security/limits.conf /etc/security/limits.d/*
+    /usr/bin/grep '^[^#]*hard core' /etc/security/limits.conf /etc/security/limits.d/*
   become: yes
   changed_when: false
   register: cis_gather_data_limits_result
