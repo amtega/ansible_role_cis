@@ -34,7 +34,7 @@
     - block:
         - name: Run audit tasks
           include_tasks: run_check.yml
-          loop: "{{ cis_audit }}"
+          loop: "{{ cis_audit | sort }}"
           loop_control:
             loop_var: cis_audit_item
             label: "CIS audit {{ cis_audit_item }}"

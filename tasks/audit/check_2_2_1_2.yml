@@ -1,0 +1,42 @@
+- name: Gather data to ensure ntp is configured - ntp.conf - restrict
+  command: /usr/bin/grep "^restrict" /etc/ntp.conf
+  become: yes
+  changed_when: false
+  register: cis_gather_data_restrict_result
+
+- name: Gather data to ensure ntp is configured - ntp.conf - server_pool
+  command: /usr/bin/egrep "^(server|pool)" /etc/ntp.conf
+  become: yes
+  changed_when: false
+  register: cis_gather_data_server_pool_result
+
+- name: Gather data to ensure ntp is configured - sysconfig/ntpd - options
+  command: /usr/bin/grep "^OPTIONS" /etc/sysconfig/ntpd
+  become: yes
+  changed_when: false
+  register: cis_gather_data_options_result
+
+- name: Gather data to ensure ntp is configured - ntpd.service - execstart
+  command: /usr/bin/grep "^ExecStart" /usr/lib/systemd/system/ntpd.service
+  become: yes
+  changed_when: false
+  register: cis_gather_data_execstart_result
+
+- name: Ensure ntp is configured
+  vars:
+    list_restrict_4: >-
+      cis_gather_data_restrict_result.stdout_lines
+      | select('search', '^restrict\\s+(-4\\s+)?default(\\s+(kod|nomodify|notrap|nopeer|noquery)){5}')
+      | list
+    list_restrict_6: >-
+      cis_gather_data_restrict_result.stdout_lines
+      | select('search', '^restrict\\s+-6\\s+?default(\\s+(kod|nomodify|notrap|nopeer|noquery)){5}')
+      | list
+    line_restrict_4: "{{ (list_restrict_4 | length == 1) | ternary(list_restrict_4[0], '') }}"
+    line_restrict_6: "{{ (list_restrict_6 | length == 1) | ternary(list_restrict_6[0], '') }}"
+    words: restrict default kod nomodify notrap nopeer noquery
+  assert:
+    that:
+      - line_restrict_4 is cis_search_words(words) or line_restrict_4 is cis_search_words(words + ' -4')
+      - line_restrict_6 is cis_search_words(words + ' -6')
+  register: cis_check_result
