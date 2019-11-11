@@ -1,7 +1,8 @@
 ---
 
 - name: Gather data to ensure core dumps are restricted - limits
-  command: /usr/bin/grep 'hard core' /etc/security/limits.conf /etc/security/limits.d/*
+  command: >-
+    /usr/bin/grep 'hard core' /etc/security/limits.conf /etc/security/limits.d/*
   become: yes
   changed_when: false
   register: cis_gather_data_limits_result
@@ -13,7 +14,8 @@
   register: cis_gather_data_sysctl_result
 
 - name: Gather data to ensure core dumps are restricted - sysctl.conf
-  command: /usr/bin/grep 'hard core' /etc/security/limits.conf /etc/security/limits.d/*
+  command: >-
+    /usr/bin/grep 'hard core' /etc/security/limits.conf /etc/security/limits.d/*
   become: yes
   changed_when: false
   register: cis_gather_data_sysctl_conf_result
