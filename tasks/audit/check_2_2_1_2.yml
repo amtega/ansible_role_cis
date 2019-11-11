@@ -22,21 +22,21 @@
   changed_when: false
   register: cis_gather_data_execstart_result
 
-- name: Ensure core dumps are restricted
+- name: Ensure ntp is configured
+  vars:
+    list_restrict_4: >-
+      cis_gather_data_restrict_result.stdout_lines
+      | select('search', '^restrict\\s+(-4\\s+)?default(\\s+(kod|nomodify|notrap|nopeer|noquery)){5}')
+      | list
+    list_restrict_6: >-
+      cis_gather_data_restrict_result.stdout_lines
+      | select('search', '^restrict\\s+-6\\s+?default(\\s+(kod|nomodify|notrap|nopeer|noquery)){5}')
+      | list
+    line_restrict_4: "{{ (list_restrict_4 | length == 1) | ternary(list_restrict_4[0], '') }}"
+    line_restrict_6: "{{ (list_restrict_6 | length == 1) | ternary(list_restrict_6[0], '') }}"
+    words: restrict default kod nomodify notrap nopeer noquery
   assert:
     that:
-      - ('-6' in cis_gather_data_restrict_result.stdout)
-      - ('kod' in cis_gather_data_restrict_result.stdout)
-      - ('nomodify' in cis_gather_data_restrict_result.stdout)
-      - ('notrap' in cis_gather_data_restrict_result.stdout)
-      - ('nopeer' in cis_gather_data_restrict_result.stdout)
-      - ('noquery' in cis_gather_data_restrict_result.stdout)
-      # FIXME: Not enough to check:
-      #      # grep "^restrict" /etc/ntp.conf
-      #     restrict -4 default kod nomodify notrap nopeer noquery
-      #     restrict -6 default kod nomodify notrap nopeer noquery
-      #     The -4 in the first line is optional and options after default can appear in any order. Additional restriction lines may exist. Run the following command and verify remote server is configured properly:
-      - (cis_gather_data_server_pool_result | length > 0)
-      # TODO: check desired ntp in cis_gather_data_server_pool_result
-      - (' -u ntp:ntp ' in cis_gather_data_options_result.stdout or ' -u ntp:ntp ' in cis_gather_data_execstart_result.stdout)
+      - line_restrict_4 is cis_search_words(words) or line_restrict_4 is cis_search_words(words + ' -4')
+      - line_restrict_6 is cis_search_words(words + ' -6')
   register: cis_check_result
