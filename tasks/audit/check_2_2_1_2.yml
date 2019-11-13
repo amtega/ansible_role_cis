@@ -26,6 +26,10 @@
 
 - name: Ensure ntp is configured
   vars:
+    regexp_list_restrict_4: >-
+      ^restrict\\s+(-4\\s+)?default(\\s+(kod|nomodify|notrap|nopeer|noquery)){5}
+    regexp_list_restrict_6: >-
+      ^restrict\\s+-6\\s+?default(\\s+(kod|nomodify|notrap|nopeer|noquery)){5}
     list_restrict_4: >-
       cis_gather_data_restrict_result.stdout_lines
       | select('search', regexp_list_restrict_4)
@@ -48,8 +52,3 @@
       - line_restrict_6 is cis_search_words(words + ' -6')
   register: cis_check_result
   no_log: "{{ cis_no_log }}"
-  vars:
-    regexp_list_restrict_4: >-
-      ^restrict\\s+(-4\\s+)?default(\\s+(kod|nomodify|notrap|nopeer|noquery)){5}
-    regexp_list_restrict_6: >-
-      ^restrict\\s+-6\\s+?default(\\s+(kod|nomodify|notrap|nopeer|noquery)){5}

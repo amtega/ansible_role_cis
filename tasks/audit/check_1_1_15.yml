@@ -1,7 +1,16 @@
 ---
 
+- name: Gather data to ensure nodev option set on /dev/shm partition
+  shell: |-
+    set -o pipefail # Raise internal pipe errors
+    mount | grep /dev/shm
+  become: yes
+  changed_when: false
+  register: cis_gather_data_result
+
 - name: Ensure nodev option set on /dev/shm partition
-  vars:
-    check_mount_path: /dev/shm
-    check_mount_option: nodev
-  include_tasks: ../common/check_mount_option.yml
+  assert:
+    quiet: "{{ cis_quiet_assertions }}"
+    that: '"nodev" in cis_gather_data_result.stdout'
+  register: cis_check_result
+  no_log: "{{ cis_no_log }}"
