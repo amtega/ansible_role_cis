@@ -8,7 +8,9 @@
       centos: 6
       rhel: 6
 
-- block:
+- environment:
+      PATH: "{{ ansible_env.PATH }}:/usr/sbin:/sbin"
+  block:
     - name: Setup fact with supported audit checks
       set_fact:
         cis_supported_audit_checks_fact: "{{ cis_supported_audit_checks }}"
