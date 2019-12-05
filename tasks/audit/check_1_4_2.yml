@@ -14,3 +14,4 @@
       | select("search", "^GRUB2_PASSWORD")
       | list
       | length != 0
+  no_log: "{{ cis_no_log }}"

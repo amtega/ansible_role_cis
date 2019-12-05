@@ -11,6 +11,7 @@
   become: yes
   changed_when: false
   register: cis_gather_data_result
+  no_log: "{{ cis_no_log }}"
 
 - name: Ensure no unconfined daemons exist
   assert:
