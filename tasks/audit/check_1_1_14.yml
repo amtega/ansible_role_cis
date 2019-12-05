@@ -5,3 +5,4 @@
     check_mount_path: /home
     check_mount_option: nodev
   include_tasks: ../common/check_mount_option.yml
+  no_log: "{{ cis_no_log }}"

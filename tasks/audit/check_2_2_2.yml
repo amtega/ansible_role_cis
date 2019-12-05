@@ -6,6 +6,7 @@
     state: absent
   register: cis_x_check_result
   check_mode: yes
+  no_log: "{{ cis_no_log }}"
 
 - name: Ensure X Window System is not installed
   assert:

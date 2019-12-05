@@ -7,6 +7,7 @@
   become: yes
   changed_when: false
   register: cis_gather_data_result
+  no_log: "{{ cis_no_log }}"
 
 - name: Ensure nosuid option set on /dev/shm partition
   assert:
