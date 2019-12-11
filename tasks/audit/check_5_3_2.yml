@@ -7,7 +7,7 @@
   no_log: "{{ cis_no_log }}"
 
 - name: Read /etc/pam.d/system-auth
-  command: cat /etc/pam.d/system-auth
+  command: /usr/bin/cat /etc/pam.d/system-auth
   changed_when: no
   register: cis_read_etc_pam_d_system_auth_result
   no_log: "{{ cis_no_log }}"

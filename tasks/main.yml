@@ -16,7 +16,7 @@
         cis_supported_audit_checks_fact: "{{ cis_supported_audit_checks }}"
 
     - name: Gather kernel parameters
-      command: sysctl -a
+      command: /usr/sbin/sysctl -a
       changed_when: no
       register: cis_sysctl_result
 
@@ -25,7 +25,7 @@
         cis_kernel_params: "{{ cis_sysctl_result.stdout_lines }}"
 
     - name: Gather sshd configuration
-      command: sshd -T
+      command: /usr/sbin/sshd -T
       changed_when: no
       register: cis_sshd_config_result
 
