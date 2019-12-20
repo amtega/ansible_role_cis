@@ -5,7 +5,7 @@
     cis_check_description: >-
       Ensure nodev option set on /home partition
 
-- name: Ensure nodev option set on /home partition
+- name: "{{ cis_check_description }}"
   vars:
     check_mount_path: /home
     check_mount_option: nodev

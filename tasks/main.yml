@@ -16,9 +16,13 @@
         cis_supported_audit_checks_fact: "{{ cis_supported_audit_checks }}"
 
     - name: Gather kernel parameters
-      command: /usr/sbin/sysctl -a
+      command: "{{ cis_sysctl_command }} -a"
       changed_when: no
       register: cis_sysctl_result
+      vars:
+        cis_sysctl_command: >-
+          {{ (ansible_facts.distribution_major_version is version("7", ">="))
+             | ternary("/usr/sbin/sysctl", "/sbin/sysctl") }}
 
     - name: Setup fact with kernel parameters
       set_fact:

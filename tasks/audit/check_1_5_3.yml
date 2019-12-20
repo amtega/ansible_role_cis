@@ -5,7 +5,7 @@
     cis_check_description: >-
       Ensure address space layout randomization (ASLR) is enabled
 
-- name: Ensure address space layout randomization (ASLR) is enabled
+- name: "{{ cis_check_description }}"
   assert:
     quiet: "{{ cis_quiet_assertions }}"
     that: '"kernel.randomize_va_space = 2" in cis_kernel_params'

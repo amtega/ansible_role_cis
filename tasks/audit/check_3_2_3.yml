@@ -5,7 +5,7 @@
     cis_check_description: >-
       Ensure secure ICMP redirects are not accepted
 
-- name: Ensure secure ICMP redirects are not accepted
+- name: "{{ cis_check_description }}"
   assert:
     quiet: "{{ cis_quiet_assertions }}"
     that:

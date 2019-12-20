@@ -5,7 +5,7 @@
     cis_check_description: >-
       Ensure SSH LoginGraceTime is set to one minute or less
 
-- name: Ensure SSH LoginGraceTime is set to one minute or less
+- name: "{{ cis_check_description }}"
   assert:
     quiet: "{{ cis_quiet_assertions }}"
     that: logingracetime_value | int <= 60

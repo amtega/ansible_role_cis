@@ -12,5 +12,6 @@
       vars:
         result_dict:
           "name": "{{ cis_audit_item }}"
+          "description": "{{ cis_check_description }}"
           "passed": >-
             {{ not cis_check_result | default({ "failed": "yes" }) is failed }}

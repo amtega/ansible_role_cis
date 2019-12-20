@@ -26,7 +26,7 @@
   changed_when: false
   register: cis_gather_data_sysctl_conf_result
 
-- name: Ensure core dumps are restricted
+- name: "{{ cis_check_description }}"
   assert:
     quiet: "{{ cis_quiet_assertions }}"
     that:

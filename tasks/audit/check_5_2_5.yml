@@ -5,7 +5,7 @@
     cis_check_description: >-
       Ensure SSH MaxAuthTries is set to 4 or less
 
-- name: Ensure SSH MaxAuthTries is set to 4 or less
+- name: "{{ cis_check_description }}"
   assert:
     quiet: "{{ cis_quiet_assertions }}"
     that: maxauthtries_value | int <= 4

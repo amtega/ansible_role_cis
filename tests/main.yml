@@ -37,10 +37,13 @@
     - prepare
     - idempotence
 
-- name: Test crontab role
+- name: Test cis role
   hosts: docker_sandbox_containers
   roles:
       - amtega.cis
+  tasks:
+    - name: Show results
+      debug: var=cis_results_fact
   tags:
     - idempotence
 

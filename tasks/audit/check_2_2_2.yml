@@ -14,7 +14,7 @@
   changed_when: no
   no_log: "{{ cis_no_log }}"
 
-- name: Ensure X Window System is not installed
+- name: "{{ cis_check_description }}"
   assert:
     quiet: "{{ cis_quiet_assertions }}"
     that:

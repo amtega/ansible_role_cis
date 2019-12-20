@@ -13,7 +13,7 @@
   check_mode: yes
   no_log: "{{ cis_no_log }}"
 
-- name: Ensure prelink is disabled
+- name: "{{ cis_check_description }}"
   assert:
     quiet: "{{ cis_quiet_assertions }}"
     that:

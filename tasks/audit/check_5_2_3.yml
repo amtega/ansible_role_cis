@@ -5,7 +5,7 @@
     cis_check_description: >-
       Ensure SSH LogLevel is set to INFO
 
-- name: Ensure SSH LogLevel is set to INFO
+- name: "{{ cis_check_description }}"
   assert:
     quiet: "{{ cis_quiet_assertions }}"
     that: '"loglevel INFO" in cis_sshd_config'

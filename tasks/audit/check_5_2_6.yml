@@ -5,7 +5,7 @@
     cis_check_description: >-
       Ensure SSH IgnoreRhosts is enabled
 
-- name: Ensure SSH IgnoreRhosts is enabled
+- name: "{{ cis_check_description }}"
   assert:
     quiet: "{{ cis_quiet_assertions }}"
     that: '"ignorerhosts yes" in cis_sshd_config'
