@@ -1,5 +1,10 @@
 ---
 
+- name: Setup fact with check description
+  set_fact:
+    cis_check_description: >-
+      Ensure no unconfined daemons exist
+
 - name: Gather data to ensure no unconfined daemons exist
   shell: |-
     set -o pipefail # Raise internal pipe errors
@@ -13,7 +18,7 @@
   register: cis_gather_data_result
   no_log: "{{ cis_no_log }}"
 
-- name: Ensure no unconfined daemons exist
+- name: "{{ cis_check_description }}"
   assert:
     quiet: "{{ cis_quiet_assertions }}"
     that: cis_gather_data_result.stdout | length == 0

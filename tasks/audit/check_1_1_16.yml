@@ -1,5 +1,10 @@
 ---
 
+- name: Setup fact with check description
+  set_fact:
+    cis_check_description: >-
+      Ensure nosuid option set on /dev/shm partition
+
 - name: Gather data to ensure nosuid option set on /dev/shm partition
   shell: |-
     set -o pipefail # Raise internal pipe errors
@@ -9,7 +14,7 @@
   register: cis_gather_data_result
   no_log: "{{ cis_no_log }}"
 
-- name: Ensure nosuid option set on /dev/shm partition
+- name: "{{ cis_check_description }}"
   assert:
     quiet: "{{ cis_quiet_assertions }}"
     that: '"nosuid" in cis_gather_data_result.stdout'

@@ -1,5 +1,10 @@
 ---
 
+- name: Setup fact with check description
+  set_fact:
+    cis_check_description: >-
+      Ensure sticky bit is set on all world-writable directories
+
 - name: Gather data to ensure sticky bit on all world-writeable directories
   shell: |-
     set -o pipefail # Raise internal pipe errors
@@ -11,7 +16,7 @@
   register: cis_gather_data_result
   no_log: "{{ cis_no_log }}"
 
-- name: Ensure sticky bit is set on all world-writable directories
+- name: "{{ cis_check_description }}"
   assert:
     quiet: "{{ cis_quiet_assertions }}"
     that: cis_gather_data_result.stdout | length == 0

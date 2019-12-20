@@ -1,6 +1,11 @@
 ---
 
-- name: Ensure separate partition exists for /home
+- name: Setup fact with check description
+  set_fact:
+    cis_check_description: >-
+      Ensure separate partition exists for /home
+
+- name: "{{ cis_check_description }}"
   assert:
     quiet: "{{ cis_quiet_assertions }}"
     that:

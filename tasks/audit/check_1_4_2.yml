@@ -1,12 +1,17 @@
 ---
 
+- name: Setup fact with check description
+  set_fact:
+    cis_check_description: >-
+      Ensure bootloader password is set
+
 - name: Read /boot/grub2/grub.cfg
   command: /usr/bin/cat /boot/grub2/grub.cfg
   changed_when: no
   register: cis_read_boot_grub2_grub_result
   no_log: "{{ cis_no_log }}"
 
-- name: Ensure bootloader password is set
+- name: "{{ cis_check_description }}"
   assert:
     quiet: yes
     that: >-

@@ -1,5 +1,10 @@
 ---
 
+- name: Setup fact with check description
+  set_fact:
+    cis_check_description: >-
+      Ensure permissions on bootloader config are configured
+
 - name: Read permissions of /boot/grub2/grub.cfg
   stat:
     path: /boot/grub2/grub.cfg
@@ -12,7 +17,7 @@
   register: cis_stat_boot_grub2_user_result
   no_log: "{{ cis_no_log }}"
 
-- name: Ensure permissions on bootloader config are configured
+- name: "{{ cis_check_description }}"
   assert:
     quiet: "{{ cis_quiet_assertions }}"
     that:
