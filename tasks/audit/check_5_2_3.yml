@@ -1,5 +1,10 @@
 ---
 
+- name: Setup fact with check description
+  set_fact:
+    cis_check_description: >-
+      Ensure SSH LogLevel is set to INFO
+
 - name: Ensure SSH LogLevel is set to INFO
   assert:
     quiet: "{{ cis_quiet_assertions }}"

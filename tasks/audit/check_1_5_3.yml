@@ -1,5 +1,10 @@
 ---
 
+- name: Setup fact with check description
+  set_fact:
+    cis_check_description: >-
+      Ensure address space layout randomization (ASLR) is enabled
+
 - name: Ensure address space layout randomization (ASLR) is enabled
   assert:
     quiet: "{{ cis_quiet_assertions }}"

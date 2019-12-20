@@ -1,5 +1,10 @@
 ---
 
+- name: Setup fact with check description
+  set_fact:
+    cis_check_description: >-
+      Ensure nodev option set on /home partition
+
 - name: Ensure nodev option set on /home partition
   vars:
     check_mount_path: /home

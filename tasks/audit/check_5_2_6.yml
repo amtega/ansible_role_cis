@@ -1,5 +1,10 @@
 ---
 
+- name: Setup fact with check description
+  set_fact:
+    cis_check_description: >-
+      Ensure SSH IgnoreRhosts is enabled
+
 - name: Ensure SSH IgnoreRhosts is enabled
   assert:
     quiet: "{{ cis_quiet_assertions }}"

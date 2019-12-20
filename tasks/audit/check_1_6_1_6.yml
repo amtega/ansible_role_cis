@@ -1,5 +1,10 @@
 ---
 
+- name: Setup fact with check description
+  set_fact:
+    cis_check_description: >-
+      Ensure no unconfined daemons exist
+
 - name: Gather data to ensure no unconfined daemons exist
   shell: |-
     set -o pipefail # Raise internal pipe errors

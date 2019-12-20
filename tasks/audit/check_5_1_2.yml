@@ -1,5 +1,10 @@
 ---
 
+- name: Setup fact with check description
+  set_fact:
+    cis_check_description: >-
+      Ensure permissions on /etc/crontab are configured
+
 - name: Read permissions of /etc/crontab
   stat:
     path: /etc/crontab

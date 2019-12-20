@@ -1,5 +1,10 @@
 ---
 
+- name: Setup fact with check description
+  set_fact:
+    cis_check_description: >-
+      Ensure permissions on /etc/cron.weekly are configured
+
 - name: Read permissions of /etc/cron.weekly
   stat:
     path: /etc/cron.weekly

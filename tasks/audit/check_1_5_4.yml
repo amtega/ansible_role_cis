@@ -1,5 +1,10 @@
 ---
 
+- name: Setup fact with check description
+  set_fact:
+    cis_check_description: >-
+      Ensure prelink is disabled
+
 - name: Gather data to to ensure prelink is disabled
   yum:
     name: prelink

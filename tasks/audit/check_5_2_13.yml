@@ -1,5 +1,10 @@
 ---
 
+- name: Setup fact with check description
+  set_fact:
+    cis_check_description: >-
+      Ensure SSH LoginGraceTime is set to one minute or less
+
 - name: Ensure SSH LoginGraceTime is set to one minute or less
   assert:
     quiet: "{{ cis_quiet_assertions }}"

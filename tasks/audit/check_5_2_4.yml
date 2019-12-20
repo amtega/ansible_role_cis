@@ -1,5 +1,10 @@
 ---
 
+- name: Setup fact with check description
+  set_fact:
+    cis_check_description: >-
+      Ensure SSH X11 forwarding is disabled
+
 - name: Ensure SSH X11 forwarding is disabled
   assert:
     quiet: "{{ cis_quiet_assertions }}"
