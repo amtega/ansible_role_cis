@@ -7,7 +7,7 @@ galaxy_info:
   description: Run CIS RHEL 7 security benchmarks
   company: AMTEGA - Xunta de Galicia
   license: GPLv3 or EUPL
-  min_ansible_version: 2.7
+  min_ansible_version: 2.8
   platforms:
   - name: EL
     versions:
@@ -19,5 +19,7 @@ galaxy_info:
 
 dependencies:
   - role: amtega.check_platform
-    tags:
-      - never
+    vars:
+      check_platform_distributions:
+        centos: 6
+        rhel: 6
