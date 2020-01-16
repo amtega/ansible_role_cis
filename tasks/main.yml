@@ -1,13 +1,6 @@
 ---
 # Role tasks
 
-- include_role:
-    name: amtega.check_platform
-  vars:
-    check_platform_distributions:
-      centos: 6
-      rhel: 6
-
 - environment:
       PATH: "{{ ansible_env.PATH }}:/usr/sbin:/sbin"
   block:
