@@ -5,7 +5,7 @@
     cis_check_description: >-
       Ensure AIDE is installed
 
-- name: Gather data to to ensure prelink is disabled
+- name: Gather data to to ensure AIDE is installed
   yum:
     name: aide
     state: present
