@@ -1,0 +1,49 @@
+---
+
+- name: Setup fact with check description
+  set_fact:
+    cis_check_description: >-
+      Ensure source routed packets are not accepted
+
+- name: Gather data to to ensure (all) source routed packets are not accepted
+  become: yes
+  command: /sbin/sysctl net.ipv4.conf.all.accept_source_route
+  changed_when: no
+  register: cis_source_routed_packets_all_result
+  no_log: "{{ cis_no_log }}"
+
+- name: Gather data to to ensure (default) source routed packets are not accepted
+  become: yes
+  command: /sbin/sysctl net.ipv4.conf.default.accept_source_route
+  changed_when: no
+  register: cis_source_routed_packets_default_result
+  no_log: "{{ cis_no_log }}"
+
+- name: Gather data to to ensure (conf all) source routed packets are not accepted
+  become: yes
+  command: >-
+    /bin/grep --no-filename "net\.ipv4\.conf\.all\.accept_source_route" /etc/sysctl.conf /etc/sysctl.d/*
+  changed_when: no
+  failed_when: no
+  register: cis_source_routed_packets_conf_all_result
+  no_log: "{{ cis_no_log }}"
+
+- name: Gather data to to ensure (conf default) source routed packets are not accepted
+  become: yes
+  command: >-
+    /bin/grep --no-filename "net\.ipv4\.conf\.default\.accept_source_route" /etc/sysctl.conf /etc/sysctl.d/*
+  changed_when: no
+  failed_when: no
+  register: cis_source_routed_packets_conf_default_result
+  no_log: "{{ cis_no_log }}"
+
+- name: "{{ cis_check_description }}"
+  assert:
+    quiet: "{{ cis_quiet_assertions }}"
+    that:
+      - "'net.ipv4.conf.all.accept_source_route = 0' in cis_source_routed_packets_all_result.stdout_lines"
+      - "'net.ipv4.conf.default.accept_source_route = 0' in cis_source_routed_packets_default_result.stdout_lines"
+      - "'net.ipv4.conf.all.accept_source_route = 0' in cis_source_routed_packets_conf_all_result.stdout_lines"
+      - "'net.ipv4.conf.default.accept_source_route = 0' in cis_source_routed_packets_conf_default_result.stdout_lines"
+  register: cis_check_result
+  no_log: "{{ cis_no_log }}"
