@@ -1,0 +1,24 @@
+---
+
+- name: Setup fact with check description
+  set_fact:
+    cis_check_description: >-
+      Ensure xinetd is not enabled
+
+- name: Gather data to to ensure xinetd is not enabled
+  become: yes
+  command: /usr/bin/systemctl is-enabled xinetd
+  changed_when: no
+  register: cis_disabled_xinetd_check_result
+  no_log: "{{ cis_no_log }}"
+
+- name: "{{ cis_check_description }}"
+  assert:
+    quiet: "{{ cis_quiet_assertions }}"
+    that: >-
+      "'disabled' in cis_disabled_xinetd_check_result.stdout"
+      or cis_disabled_xinetd_check_result.failed
+    # "stderr": "Failed to get unit file state for xinetd.service: No such file or directory",
+
+  register: cis_check_result
+  no_log: "{{ cis_no_log }}"
