@@ -1,0 +1,22 @@
+---
+
+- name: Setup fact with check description
+  set_fact:
+    cis_check_description: >-
+      Ensure LDAP client is not installed
+
+- name: Gather data to to ensure ldap is not installed
+  yum:
+    name: openldap-clients
+    state: absent
+  register: cis_ldap_check_result
+  check_mode: yes
+  no_log: "{{ cis_no_log }}"
+
+- name: "{{ cis_check_description }}"
+  assert:
+    quiet: "{{ cis_quiet_assertions }}"
+    that:
+      - cis_ldap_check_result is not changed
+  register: cis_check_result
+  no_log: "{{ cis_no_log }}"
