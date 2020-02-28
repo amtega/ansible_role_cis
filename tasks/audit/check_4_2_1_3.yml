@@ -17,7 +17,7 @@
   assert:
     quiet: "{{ cis_quiet_assertions }}"
     that: >-
-      good_rsyslog_perms(cis_gather_rsyslog_perms_result.stdout_lines)
+      cis_gather_rsyslog_perms_result.stdout_lines | good_rsyslog_perms
 
   register: cis_check_result
   no_log: "{{ cis_no_log }}"
