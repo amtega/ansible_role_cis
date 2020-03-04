@@ -7,18 +7,18 @@
 
 - name: Gather data to to ensure SSH Protocol is set to 2
   become: yes
-  command: >-
-    /bin/grep "^Protocol" /etc/ssh/sshd_config
+  lineinfile:
+    name: /etc/ssh/sshd_config
+    regexp: '^Protocol\s+2'
+    state: absent
+  check_mode: yes
   changed_when: no
-  failed_when: no
   register: cis_ssh_protocol_result
   no_log: "{{ cis_no_log }}"
 
 - name: "{{ cis_check_description }}"
   assert:
     quiet: "{{ cis_quiet_assertions }}"
-    that:
-      - "'Protocol 2' in cis_ssh_protocol_result.stdout_lines"
-      - cis_ssh_protocol_result.stdout_lines | length == 1
+    that: cis_ssh_protocol_result.found
   register: cis_check_result
   no_log: "{{ cis_no_log }}"
