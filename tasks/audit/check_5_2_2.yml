@@ -1,0 +1,24 @@
+---
+
+- name: Setup fact with check description
+  set_fact:
+    cis_check_description: >-
+      Ensure SSH Protocol is set to 2
+
+- name: Gather data to to ensure SSH Protocol is set to 2
+  become: yes
+  command: >-
+    /bin/grep "^Protocol" /etc/ssh/sshd_config
+  changed_when: no
+  failed_when: no
+  register: cis_ssh_protocol_result
+  no_log: "{{ cis_no_log }}"
+
+- name: "{{ cis_check_description }}"
+  assert:
+    quiet: "{{ cis_quiet_assertions }}"
+    that:
+      - "'Protocol 2' in cis_ssh_protocol_result.stdout_lines"
+      - cis_ssh_protocol_result.stdout_lines | length == 1
+  register: cis_check_result
+  no_log: "{{ cis_no_log }}"
