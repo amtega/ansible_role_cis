@@ -10,6 +10,10 @@ from __future__ import absolute_import, division, print_function
 
 __metaclass__ = type
 
+from ansible.utils.display import Display
+
+DISPLAY = Display()
+
 
 def cis_search_words(string, words):
     """Test if given words compose a string.
@@ -65,7 +69,7 @@ def iptables_contains_ports(iptables_stdout_lines, open_ports):
         chunks = ports_to_parse.split(',')
         for chunk in chunks:
             if ':' in chunk:
-                begin, end = map(int,chunk.split(':'))
+                begin, end = map(int, chunk.split(':'))
                 ports_parsed.extend(range(begin, end + 1))
             else:
                 ports_parsed.append(int(chunk))
@@ -91,6 +95,36 @@ def iptables_contains_ports(iptables_stdout_lines, open_ports):
                     iptables_port_set |= set([(protocol, port)])
     return (open_port_set - iptables_port_set) == set()
 
+
+def user_system_not_login(etc_passwd_lines):
+    """
+        Auxiliary function for check 5.4.2
+
+        Parses /etc/passwd lines and checks that system accounts are non-login
+    """
+    for line in etc_passwd_lines.split('\n'):
+        if len(line) == 0:
+            continue
+        line_split = line.split(':')
+        if len(line_split) != 7:
+            DISPLAY.warning(
+                'user_system_not_login:Strange /etc/passwd line:\n%s' % (line))
+            continue
+        (login, _passw, uid, _gid, _gecos, _directory, shell) = line_split
+        uid = int(uid)
+        shell = shell.strip()
+        if login.startswith('+') or login in ['root', 'sync', 'shutdown',
+                                              'halt']:
+            continue
+        elif uid >= 1000:
+            continue
+        elif shell in ['/sbin/nologin', '/bin/false']:
+            continue
+        else:
+            return False
+    return True
+
+
 class TestModule:
     """ Ansible tests """
 
@@ -99,4 +133,5 @@ class TestModule:
             "cis_search_words": cis_search_words,
             'good_rsyslog_perms': good_rsyslog_perms,
             'iptables_contains_ports': iptables_contains_ports,
+            'user_system_not_login': user_system_not_login,
             }
