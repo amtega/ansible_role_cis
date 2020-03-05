@@ -11,7 +11,6 @@
     state: absent
   register: cis_x_check_result
   check_mode: yes
-  changed_when: no
   no_log: "{{ cis_no_log }}"
 
 - name: "{{ cis_check_description }}"
