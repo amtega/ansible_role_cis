@@ -12,6 +12,8 @@
   register: cis_aide_check_result
   check_mode: yes
   no_log: "{{ cis_no_log }}"
+  tags:
+    - molecule-idempotence-notest
 
 - name: "{{ cis_check_description }}"
   assert:
