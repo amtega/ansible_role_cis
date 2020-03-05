@@ -102,6 +102,7 @@ def user_system_not_login(etc_passwd_lines):
 
         Parses /etc/passwd lines and checks that system accounts are non-login
     """
+    result = True
     for line in etc_passwd_lines.split('\n'):
         if len(line) == 0:
             continue
@@ -121,8 +122,30 @@ def user_system_not_login(etc_passwd_lines):
         elif shell in ['/sbin/nologin', '/bin/false']:
             continue
         else:
-            return False
-    return True
+            DISPLAY.warning('check 5.4.2: Sytem user %s have shell %s' % (login, shell))
+            result = False
+    return result
+
+def passwd_field_not_empty(etc_passwd_lines):
+    """
+        Auxiliary function for check 6.2.1
+
+        Parses /etc/passwd lines and checks that password fields are not empty
+    """
+    result = True
+    for line in etc_passwd_lines.split('\n'):
+        if len(line) == 0:
+            continue
+        line_split = line.split(':')
+        if len(line_split) != 7:
+            DISPLAY.warning(
+                'passwd_field_not_empty:Strange /etc/passwd line:\n%s' % (line))
+            continue
+        (login, passw, _uid, _gid, _gecos, _directory, _shell) = line_split
+        if passw == "":
+            DISPLAY.warning('check 6.2.1: User without password: %s' % (login))
+            result = False
+    return result
 
 
 class TestModule:
@@ -133,5 +156,6 @@ class TestModule:
             "cis_search_words": cis_search_words,
             'good_rsyslog_perms': good_rsyslog_perms,
             'iptables_contains_ports': iptables_contains_ports,
+            'passwd_field_not_empty': passwd_field_not_empty,
             'user_system_not_login': user_system_not_login,
             }
