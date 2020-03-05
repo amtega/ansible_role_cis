@@ -31,6 +31,44 @@ def cis_search_words(string, words):
     return set_string == set_words
 
 
+def all_at_least_restrictive_as(find_list, reference_permission):
+    """
+        Auxiliary function for check 4.2.4
+
+        Compares two permission strings and returns True when the reference
+        octal permission is equally or more restrictive
+    """
+    result = True
+    for found_file in find_list:
+        path = found_file["path"]
+        mode = found_file["mode"]
+        regular_file = found_file["isreg"]
+        if not regular_file or at_least_restrictive_as(mode, reference_permission):
+            continue
+        else:
+            DISPLAY.warning(
+                'check 4.2.4: Insecure permission (%s %s)' % (mode, path))
+            result = False
+    return result
+
+
+def at_least_restrictive_as(str_permission, str_reference_permission):
+    """
+        Auxiliary function for "all_at_least_restrictive_as"
+
+        Compares two permission strings and returns True when the reference is
+        equally or more restrictive
+    """
+    def str_to_perm(str_perm):
+        """Convert a permission in string format to binary"""
+        return int(str_perm, 8)
+
+    permission = str_to_perm(str_permission)
+    reference_permission = str_to_perm(str_reference_permission)
+    is_more_permissive = bool(permission & ~ reference_permission)
+    return not is_more_permissive
+
+
 def good_rsyslog_perms(grep_stdout_lines):
     """
         Auxiliary function for check 4.2.1.3
@@ -104,7 +142,7 @@ def user_system_not_login(etc_passwd_lines):
     """
     result = True
     for line in etc_passwd_lines.split('\n'):
-        if len(line) == 0:
+        if line == "":
             continue
         line_split = line.split(':')
         if len(line_split) != 7:
@@ -126,6 +164,7 @@ def user_system_not_login(etc_passwd_lines):
             result = False
     return result
 
+
 def passwd_field_not_empty(etc_passwd_lines):
     """
         Auxiliary function for check 6.2.1
@@ -134,7 +173,7 @@ def passwd_field_not_empty(etc_passwd_lines):
     """
     result = True
     for line in etc_passwd_lines.split('\n'):
-        if len(line) == 0:
+        if line == "":
             continue
         line_split = line.split(':')
         if len(line_split) != 7:
@@ -153,6 +192,7 @@ class TestModule:
 
     def tests(self):
         return {
+            "all_at_least_restrictive_as": all_at_least_restrictive_as,
             "cis_search_words": cis_search_words,
             'good_rsyslog_perms': good_rsyslog_perms,
             'iptables_contains_ports': iptables_contains_ports,
