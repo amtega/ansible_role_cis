@@ -30,6 +30,9 @@
       set_fact:
         cis_sshd_config: "{{ cis_sshd_config_result.stdout_lines }}"
 
+    - name: Gather service facts
+      service_facts:
+
     - block:
         - name: Run audit tasks
           include_tasks: run_check.yml

@@ -3,13 +3,13 @@
 - name: Setup fact with check description
   set_fact:
     cis_check_description: >-
-      Ensure X Window System is not installed
+      Ensure telnet client is not installed
 
-- name: Gather data to ensure X Window System is not installed
+- name: Gather data to to ensure telnet is not installed
   yum:
-    name: xorg-x11*
+    name: telnet
     state: absent
-  register: cis_x_check_result
+  register: cis_telnet_check_result
   check_mode: yes
   no_log: "{{ cis_no_log }}"
 
@@ -17,7 +17,6 @@
   assert:
     quiet: "{{ cis_quiet_assertions }}"
     that:
-      - cis_x_check_result is not changed
-      - cis_x_check_result is success
+      - cis_telnet_check_result is not changed
   register: cis_check_result
   no_log: "{{ cis_no_log }}"

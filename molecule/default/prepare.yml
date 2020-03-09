@@ -1,0 +1,24 @@
+---
+- name: Prepare
+  hosts: all
+  gather_facts: false
+  tasks:
+    - name: Install python for Ansible
+      raw: test -e /usr/bin/python || (apt -y update && apt install -y python-minimal)
+      become: true
+      changed_when: false
+
+- name: Prepare testing environment
+  hosts: all
+  become: yes
+  tasks:
+    - name: Setup packages
+      package:
+        name:
+          - crontabs
+          - openssh-server
+          - "{{ grub }}"
+      vars:
+        grub: >-
+          {{ (ansible_facts.distribution_major_version
+              is version("7", "<") | ternary("grub", "grub2") )}}

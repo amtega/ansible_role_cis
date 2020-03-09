@@ -3,21 +3,22 @@
 - name: Setup fact with check description
   set_fact:
     cis_check_description: >-
-      Ensure X Window System is not installed
+      Ensure SSH Protocol is set to 2
 
-- name: Gather data to ensure X Window System is not installed
-  yum:
-    name: xorg-x11*
+- name: Gather data to to ensure SSH Protocol is set to 2
+  become: yes
+  lineinfile:
+    name: /etc/ssh/sshd_config
+    regexp: '^Protocol\s+2'
     state: absent
-  register: cis_x_check_result
   check_mode: yes
+  changed_when: no
+  register: cis_ssh_protocol_result
   no_log: "{{ cis_no_log }}"
 
 - name: "{{ cis_check_description }}"
   assert:
     quiet: "{{ cis_quiet_assertions }}"
-    that:
-      - cis_x_check_result is not changed
-      - cis_x_check_result is success
+    that: cis_ssh_protocol_result.found
   register: cis_check_result
   no_log: "{{ cis_no_log }}"

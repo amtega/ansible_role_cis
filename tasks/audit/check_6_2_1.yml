@@ -1,0 +1,19 @@
+---
+- name: Setup fact with check description
+  set_fact:
+    cis_check_description: >-
+      Ensure password fields are not empty
+
+- name: Gather data to to ensure system accounts are non-login
+  slurp:
+    src: /etc/passwd
+  register: cis_etc_passwd_result
+
+- name: "{{ cis_check_description }}"
+  vars:
+    etc_passwd_lines: "{{ cis_etc_passwd_result['content'] | b64decode }}"
+  assert:
+    quiet: "{{ cis_quiet_assertions }}"
+    that: etc_passwd_lines is passwd_field_not_empty
+  register: cis_check_result
+  no_log: "{{ cis_no_log }}"

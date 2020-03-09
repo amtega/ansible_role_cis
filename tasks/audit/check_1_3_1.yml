@@ -3,21 +3,23 @@
 - name: Setup fact with check description
   set_fact:
     cis_check_description: >-
-      Ensure X Window System is not installed
+      Ensure AIDE is installed
 
-- name: Gather data to ensure X Window System is not installed
+- name: Gather data to to ensure AIDE is installed
   yum:
-    name: xorg-x11*
-    state: absent
-  register: cis_x_check_result
+    name: aide
+    state: present
+  register: cis_aide_check_result
   check_mode: yes
   no_log: "{{ cis_no_log }}"
+  tags:
+    - molecule-idempotence-notest
 
 - name: "{{ cis_check_description }}"
   assert:
     quiet: "{{ cis_quiet_assertions }}"
     that:
-      - cis_x_check_result is not changed
-      - cis_x_check_result is success
+      - cis_aide_check_result is not changed
+      - cis_aide_check_result is success
   register: cis_check_result
   no_log: "{{ cis_no_log }}"
