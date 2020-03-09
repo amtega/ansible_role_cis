@@ -2,38 +2,42 @@
 
 - name: Setup fact with check description
   set_fact:
-    cis_check_description: >-
-      Ensure ntp is configured
+    cis_check_description: Ensure ntp is configured
 
 - name: Gather data to ensure ntp is configured - ntp.conf - restrict
   command: /usr/bin/grep "^restrict" /etc/ntp.conf
-  become: yes
   changed_when: false
   register: cis_gather_data_restrict_result
   no_log: "{{ cis_no_log }}"
 
 - name: Gather data to ensure ntp is configured - ntp.conf - server_pool
   command: /usr/bin/egrep "^(server|pool)" /etc/ntp.conf
-  become: yes
   changed_when: false
   register: cis_gather_data_server_pool_result
   no_log: "{{ cis_no_log }}"
 
 - name: Gather data to ensure ntp is configured - sysconfig/ntpd - options
   command: /usr/bin/grep "^OPTIONS" /etc/sysconfig/ntpd
-  become: yes
   changed_when: false
   register: cis_gather_data_options_result
   no_log: "{{ cis_no_log }}"
 
 - name: Gather data to ensure ntp is configured - ntpd.service - execstart
   command: /usr/bin/grep "^ExecStart" /usr/lib/systemd/system/ntpd.service
-  become: yes
   changed_when: false
   register: cis_gather_data_execstart_result
   no_log: "{{ cis_no_log }}"
 
 - name: "{{ cis_check_description }}"
+  assert:
+    quiet: "{{ cis_quiet_assertions }}"
+    that:
+      - >-
+        line_restrict_4 is cis_search_words(words)
+        or line_restrict_4 is cis_search_words(words + ' -4')
+      - line_restrict_6 is cis_search_words(words + ' -6')
+  register: cis_check_result
+  no_log: "{{ cis_no_log }}"
   vars:
     regexp_list_restrict_4: >-
       ^restrict\\s+(-4\\s+)?default(\\s+(kod|nomodify|notrap|nopeer|noquery)){5}
@@ -52,12 +56,3 @@
     line_restrict_6: >-
       {{ (list_restrict_6 | length == 1) | ternary(list_restrict_6[0], '') }}
     words: restrict default kod nomodify notrap nopeer noquery
-  assert:
-    quiet: "{{ cis_quiet_assertions }}"
-    that:
-      - >-
-        line_restrict_4 is cis_search_words(words)
-        or line_restrict_4 is cis_search_words(words + ' -4')
-      - line_restrict_6 is cis_search_words(words + ' -6')
-  register: cis_check_result
-  no_log: "{{ cis_no_log }}"

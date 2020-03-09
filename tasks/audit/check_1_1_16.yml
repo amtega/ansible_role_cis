@@ -2,14 +2,12 @@
 
 - name: Setup fact with check description
   set_fact:
-    cis_check_description: >-
-      Ensure nosuid option set on /dev/shm partition
+    cis_check_description: Ensure nosuid option set on /dev/shm partition
 
 - name: Gather data to ensure nosuid option set on /dev/shm partition
   shell: |-
     set -o pipefail # Raise internal pipe errors
     mount | grep /dev/shm
-  become: yes
   changed_when: false
   register: cis_gather_data_result
   no_log: "{{ cis_no_log }}"

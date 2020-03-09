@@ -2,8 +2,7 @@
 
 - name: Setup fact with check description
   set_fact:
-    cis_check_description: >-
-      Ensure permissions on /etc/cron.d are configured
+    cis_check_description: Ensure permissions on /etc/cron.d are configured
 
 - name: Read permissions of /etc/cron.d
   stat:

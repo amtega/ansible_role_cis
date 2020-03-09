@@ -2,11 +2,9 @@
 
 - name: Setup fact with check description
   set_fact:
-    cis_check_description: >-
-      Ensure SSH root login is disabled
+    cis_check_description: Ensure SSH root login is disabled
 
 - name: Gather data to to ensure SSH root login is disabled
-  become: yes
   lineinfile:
     name: /etc/ssh/sshd_config
     regexp: '^PermitRootLogin\s+no'

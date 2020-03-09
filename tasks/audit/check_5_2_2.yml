@@ -2,11 +2,9 @@
 
 - name: Setup fact with check description
   set_fact:
-    cis_check_description: >-
-      Ensure SSH Protocol is set to 2
+    cis_check_description: Ensure SSH Protocol is set to 2
 
 - name: Gather data to to ensure SSH Protocol is set to 2
-  become: yes
   lineinfile:
     name: /etc/ssh/sshd_config
     regexp: '^Protocol\s+2'

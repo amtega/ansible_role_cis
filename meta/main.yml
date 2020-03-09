@@ -3,7 +3,7 @@
 
 galaxy_info:
   role_name: cis
-  author: Juan Antonio Valiño García
+  author: Juan Antonio Valiño García / Daniel Sánchez Fábregas
   description: Run CIS RHEL 7 security benchmarks
   company: AMTEGA - Xunta de Galicia
   license: GPLv3 or EUPL
@@ -11,7 +11,6 @@ galaxy_info:
   platforms:
   - name: EL
     versions:
-      - 6
       - 7
   galaxy_tags:
     - cis
@@ -21,5 +20,5 @@ dependencies:
   - role: amtega.check_platform
     vars:
       check_platform_distributions:
-        centos: 6
-        rhel: 6
+        centos: 7
+        rhel: 7

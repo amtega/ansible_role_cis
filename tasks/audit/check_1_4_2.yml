@@ -2,8 +2,7 @@
 
 - name: Setup fact with check description
   set_fact:
-    cis_check_description: >-
-      Ensure bootloader password is set
+    cis_check_description: Ensure bootloader password is set
 
 - name: Read /boot/grub2/grub.cfg
   command: /usr/bin/cat /boot/grub2/grub.cfg
