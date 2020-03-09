@@ -2,17 +2,9 @@
 
 - name: Setup fact with check description
   set_fact:
-    cis_check_description: >-
-      Ensure xinetd is not enabled
-
-- vars:
-    service_name: auditd
-  debug:
-    msg: "{{ ansible_facts.services.keys() | map('regex_search', service_name) | difference([None]) }}"
+    cis_check_description: Ensure xinetd is not enabled
 
 - name: "{{ cis_check_description }}"
-  vars:
-    service_name: xinetd
   assert:
     quiet: "{{ cis_quiet_assertions }}"
     that: >-
@@ -22,3 +14,5 @@
       | length == 0
   register: cis_check_result
   no_log: "{{ cis_no_log }}"
+  vars:
+    service_name: xinetd

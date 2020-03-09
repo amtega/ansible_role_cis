@@ -2,8 +2,7 @@
 
 - name: Setup fact with check description
   set_fact:
-    cis_check_description: >-
-      Ensure firewall rules exist for all open ports
+    cis_check_description: Ensure firewall rules exist for all open ports
 
 - name: Ensure netstat is installed
   yum:
@@ -15,7 +14,6 @@
   listen_ports_facts:
 
 - name: Gather data to to ensure firewall rules exist for all open ports
-  become: yes
   command: >-
     /sbin/iptables -L -n
   changed_when: no
@@ -26,7 +24,7 @@
   assert:
     quiet: "{{ cis_quiet_assertions }}"
     that: >-
-      cis_firewall_rules_result.stdout_lines is iptables_contains_ports(
+      cis_firewall_rules_result.stdout_lines is cis_iptables_contains_ports(
       ansible_facts.tcp_listen + ansible_facts.udp_listen)
   register: cis_check_result
   no_log: "{{ cis_no_log }}"

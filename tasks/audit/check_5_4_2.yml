@@ -1,8 +1,8 @@
 ---
+
 - name: Setup fact with check description
   set_fact:
-    cis_check_description: >-
-      Ensure system accounts are non-login
+    cis_check_description: Ensure system accounts are non-login
 
 - name: Gather data to to ensure system accounts are non-login
   slurp:
@@ -14,6 +14,6 @@
     etc_passwd_lines: "{{ cis_etc_passwd_result['content'] | b64decode }}"
   assert:
     quiet: "{{ cis_quiet_assertions }}"
-    that: etc_passwd_lines is user_system_not_login()
+    that: etc_passwd_lines is cis_user_system_not_login()
   register: cis_check_result
   no_log: "{{ cis_no_log }}"

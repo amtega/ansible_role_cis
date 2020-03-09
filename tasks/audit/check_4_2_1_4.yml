@@ -5,15 +5,15 @@
     cis_check_description: >-
       Ensure rsyslog is configured to send logs to a remote log host
 
-- name: Gather data to to ensure rsyslog is configured to send logs to a remote log host
-  become: yes
+- name: >-
+    Gather data to to ensure rsyslog is configured to send logs to a remote
+    log host
   command: >-
     /bin/grep "^*.*[^I][^I]*@" /etc/rsyslog.conf /etc/rsyslog.d/*.conf
   changed_when: no
   failed_when: no
   register: cis_rsyslog_external_server_result
   no_log: "{{ cis_no_log }}"
-
 
 - name: "{{ cis_check_description }}"
   assert:

@@ -1,4 +1,5 @@
 ---
+
 - name: Converge
   hosts: all
   become: yes
@@ -54,6 +55,5 @@
     - role: amtega.cis
 
   tasks:
-
     - name: Show results
       debug: var=cis_results_fact

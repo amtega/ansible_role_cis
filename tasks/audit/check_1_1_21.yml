@@ -11,7 +11,6 @@
     df --local -P \
     | awk {'if (NR!=1) print $6'} \
     | xargs -I '{}' find '{}' -xdev -type d \( -perm -0002 -a ! -perm -1000 \)
-  become: yes
   changed_when: false
   register: cis_gather_data_result
   no_log: "{{ cis_no_log }}"
