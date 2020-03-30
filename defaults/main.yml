@@ -21,6 +21,6 @@ cis_fail_at_non_fulfilment: no
 
 cis_quiet_assertions: yes
 
-# Activa no_log on check tasks
+# Hide sensitive information
 
 cis_no_log: yes
