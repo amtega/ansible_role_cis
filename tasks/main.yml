@@ -23,6 +23,19 @@
       set_fact:
         cis_kernel_params: "{{ cis_sysctl_result.stdout_lines }}"
 
+    - name: Gather kernel modules
+      vars:
+        cis_lsmod_command: >-
+          {{ (ansible_facts.distribution_major_version is version("7", ">="))
+          | ternary("/usr/sbin/lsmod", "/sbin/lsmod") }}
+      command: "{{ cis_lsmod_command }}"
+      changed_when: no
+      register: cis_lsmod_result
+
+    - name: Setup fact with kernel modules
+      set_fact:
+        cis_kernel_modules: "{{ cis_lsmod_result.stdout_lines }}"
+
     - name: Gather sshd configuration
       command: /usr/sbin/sshd -T
       changed_when: no
