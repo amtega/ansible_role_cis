@@ -1,0 +1,8 @@
+---
+
+- vars:
+    check_filesystem_type: vfat
+    check_filesystem_description: FAT
+  name: "Perform kernel module {{ check_filesystem_type }} check"
+  include_tasks: ../common/check_kernel_module.yml
+  no_log: "{{ cis_no_log }}"

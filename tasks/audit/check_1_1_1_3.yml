@@ -1,0 +1,7 @@
+---
+
+- vars:
+    check_filesystem_type: jffs2
+  name: "Perform kernel module {{ check_filesystem_type }} check"
+  include_tasks: ../common/check_kernel_module.yml
+  no_log: "{{ cis_no_log }}"
