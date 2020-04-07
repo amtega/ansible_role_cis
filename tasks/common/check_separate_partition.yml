@@ -1,0 +1,25 @@
+---
+
+- name: Setup fact with check description
+  set_fact:
+    cis_check_description: >-
+      Ensure separate partition exists for {{ check_partition_directory }}
+
+- vars:
+    mount_query: "mounts[?mount=='{{ check_partition_directory }}'].mount"
+  debug:
+    var: mount_query
+- vars:
+    mount_query: "mounts[?mount=='{{ check_partition_directory }}'].mount"
+  debug:
+    var: ansible_facts | json_query(mount_query)
+    
+- name: "{{ cis_check_description }}"
+  vars:
+    mount_query: "mounts[?mount=='{{ check_partition_directory }}'].mount"
+  assert:
+    quiet: "{{ cis_quiet_assertions }}"
+    that:
+      - ansible_facts | json_query(mount_query) | length > 0
+  register: cis_check_result
+  no_log: "{{ cis_no_log }}"
