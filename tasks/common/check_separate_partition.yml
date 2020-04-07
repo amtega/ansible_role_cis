@@ -5,15 +5,6 @@
     cis_check_description: >-
       Ensure separate partition exists for {{ check_partition_directory }}
 
-- vars:
-    mount_query: "mounts[?mount=='{{ check_partition_directory }}'].mount"
-  debug:
-    var: mount_query
-- vars:
-    mount_query: "mounts[?mount=='{{ check_partition_directory }}'].mount"
-  debug:
-    var: ansible_facts | json_query(mount_query)
-    
 - name: "{{ cis_check_description }}"
   vars:
     mount_query: "mounts[?mount=='{{ check_partition_directory }}'].mount"
