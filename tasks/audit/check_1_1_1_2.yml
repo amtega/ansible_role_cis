@@ -1,11 +1,7 @@
 ---
 
-- name: Setup fact with check description
-  set_fact:
-    cis_check_description: Ensure mounting of freevxfs filesystems is disabled
-
-- name: "{{ cis_check_description }}"
-  vars:
+- vars:
     check_filesystem_type: freevxfs
+  name: "Perform kernel module {{ check_filesystem_type }} check"
   include_tasks: ../common/check_kernel_module.yml
   no_log: "{{ cis_no_log }}"

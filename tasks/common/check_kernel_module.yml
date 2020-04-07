@@ -1,5 +1,14 @@
 ---
 
+- name: Setup fact with check description
+  vars:
+    filesystem_description: >-
+      {{ check_filesystem_description | default(check_filesystem_type) }}
+  set_fact:
+    cis_check_description: >-
+      Ensure mounting of {{ filesystem_description }} filesystems
+      is disabled
+
 - name: "Gather modprobe data about {{ check_filesystem_type }}"
   command: "/usr/sbin/modprobe -n -v {{ check_filesystem_type }}"
   changed_when: false
