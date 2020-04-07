@@ -1,0 +1,21 @@
+- name: Setup fact with check description
+  set_fact:
+    cis_check_description: Ensure SELinux policy is configured
+
+- name: Gather data to ensure SELinux policy is configured
+  command: >-
+    /usr/bin/grep "SELINUXTYPE=targeted" /etc/selinux/config
+  changed_when: no
+  failed_when: no
+  register: cis_gather_data_selinux_config_result
+
+- name: "{{ cis_check_description }}"
+  assert:
+    quiet: "{{ cis_quiet_assertions }}"
+    that:
+      - "'targeted' == ansible_facts.selinux.type"
+      - "cis_gather_data_selinux_config_result.stdout | length > 0"
+      - >-
+        'SELINUXTYPE=targeted' in cis_gather_data_selinux_config_result.stdout
+  register: cis_check_result
+  no_log: "{{ cis_no_log }}"
