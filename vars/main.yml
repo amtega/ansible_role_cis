@@ -68,4 +68,5 @@ cis_supported_audit_checks:
   - 5.2.13
   - 5.3.2
   - 5.4.2
+  - 5.4.5
   - 6.2.1
