@@ -1,3 +1,5 @@
+---
+
 - name: Setup fact with check description
   set_fact:
     cis_check_description: >-
@@ -5,6 +7,7 @@
 
 - name: Gather TMOUT from /etc/profile and /etc/bashrc
   shell: >-
+    set -o pipefail # Raise internal pipe errors
     /usr/bin/cat /etc/profile /etc/bashrc | /usr/bin/grep "^TMOUT"
   changed_when: no
   failed_when: no

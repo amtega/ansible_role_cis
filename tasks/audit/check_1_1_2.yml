@@ -1,5 +1,7 @@
+---
+
 - vars:
     check_partition_directory: /tmp
-  name: "Perform check {{ cis_audit_item }} - {{ check_partition_directory }}"
+  name: "Perform check {{ cis_audit_item }} / {{ check_partition_directory }}"
   include_tasks: ../common/check_separate_partition.yml
   no_log: "{{ cis_no_log }}"
