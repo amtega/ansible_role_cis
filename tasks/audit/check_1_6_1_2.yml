@@ -1,3 +1,5 @@
+---
+
 - name: Setup fact with check description
   set_fact:
     cis_check_description: Ensure the SELinux state is enforcing

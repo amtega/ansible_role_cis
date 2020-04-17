@@ -1,9 +1,11 @@
+---
+
 - vars:
     check_mount_path: /dev/shm
     check_mount_option: noexec
   name: >-
-    Perform check {{ cis_audit_item }}
-    - {{ check_mount_path }}
-    - {{ check_mount_option }}
+    Perform check {{ cis_audit_item }} /
+    {{ check_mount_path }} /
+    {{ check_mount_option }}
   include_tasks: ../common/check_mount_option.yml
   no_log: "{{ cis_no_log }}"
