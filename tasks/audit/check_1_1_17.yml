@@ -1,6 +1,6 @@
 - vars:
-    check_mount_path: /home
-    check_mount_option: nodev
+    check_mount_path: /dev/shm
+    check_mount_option: noexec
   name: >-
     Perform check {{ cis_audit_item }}
     - {{ check_mount_path }}

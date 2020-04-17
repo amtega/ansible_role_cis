@@ -1,0 +1,26 @@
+---
+
+- name: Setup fact with check description
+  vars:
+    filesystem_description: >-
+      {{ check_filesystem_description | default(check_filesystem_type) }}
+  set_fact:
+    cis_check_description: >-
+      Ensure mounting of {{ filesystem_description }} filesystems
+      is disabled
+
+- name: "Gather modprobe data about {{ check_filesystem_type }}"
+  command: "/usr/sbin/modprobe -n -v {{ check_filesystem_type }}"
+  changed_when: false
+  register: cis_gather_modprobe_data_result
+  no_log: "{{ cis_no_log }}"
+
+- name: "{{ cis_check_description }}"
+  assert:
+    quiet: "{{ cis_quiet_assertions }}"
+    that:
+      - '"install /bin/true" in cis_gather_modprobe_data_result.stdout'
+      - 'cis_gather_modprobe_data_result.stderr  | length == 0'
+      - '"{{ check_filesystem_type }}" not in cis_kernel_modules'
+  register: cis_check_result
+  no_log: "{{ cis_no_log }}"
