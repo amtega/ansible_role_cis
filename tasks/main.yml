@@ -48,7 +48,7 @@
     - name: Gather service facts
       service_facts:
 
-    - name: Gather service facts
+    - name: Gather package facts
       package_facts:
 
     - block:
