@@ -1,24 +1,10 @@
 ---
 
-- name: Setup fact with check description
-  set_fact:
-    cis_check_description: Ensure AIDE is installed
-
-- name: Gather data to to ensure AIDE is installed
-  yum:
-    name: aide
-    state: present
-  register: cis_aide_check_result
-  check_mode: yes
-  no_log: "{{ cis_no_log }}"
-  tags:
-    - molecule-idempotence-notest
-
-- name: "{{ cis_check_description }}"
-  assert:
-    quiet: "{{ cis_quiet_assertions }}"
-    that:
-      - cis_aide_check_result is not changed
-      - cis_aide_check_result is success
-  register: cis_check_result
+- include_tasks: ../common/check_installed_package.yml
+  vars:
+    package: aide
+    present: yes
+    description: Ensure AIDE is installed
+  name: >-
+    Perform check {{ cis_audit_item }} / {{ description }}
   no_log: "{{ cis_no_log }}"

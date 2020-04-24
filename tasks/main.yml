@@ -48,6 +48,9 @@
     - name: Gather service facts
       service_facts:
 
+    - name: Gather package facts
+      package_facts:
+
     - block:
         - name: Run audit tasks
           include_tasks: run_check.yml

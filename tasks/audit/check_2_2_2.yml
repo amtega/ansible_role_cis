@@ -4,19 +4,15 @@
   set_fact:
     cis_check_description: Ensure X Window System is not installed
 
-- name: Gather data to ensure X Window System is not installed
-  yum:
-    name: xorg-x11*
-    state: absent
-  register: cis_x_check_result
-  check_mode: yes
-  no_log: "{{ cis_no_log }}"
-
 - name: "{{ cis_check_description }}"
+  vars:
+    x11_installed_packages: >-
+      {{ ansible_facts
+      | json_query('packages.keys(@)[?starts_with(@, `xorg-x11-`) == `true`]')
+      | list }}
   assert:
     quiet: "{{ cis_quiet_assertions }}"
     that:
-      - cis_x_check_result is not changed
-      - cis_x_check_result is success
+      - x11_installed_packages | length == 0
   register: cis_check_result
   no_log: "{{ cis_no_log }}"
