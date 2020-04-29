@@ -1,20 +1,11 @@
 ---
 
-- name: Setup fact with check description
-  set_fact:
-    cis_check_description: Ensure nodev option set on /dev/shm partition
-
-- name: Gather data to ensure nodev option set on /dev/shm partition
-  shell: |-
-    set -o pipefail # Raise internal pipe errors
-    mount | grep /dev/shm
-  changed_when: false
-  register: cis_gather_data_result
-  no_log: "{{ cis_no_log }}"
-
-- name: "{{ cis_check_description }}"
-  assert:
-    quiet: "{{ cis_quiet_assertions }}"
-    that: '"nodev" in cis_gather_data_result.stdout'
-  register: cis_check_result
+- include_tasks: ../common/check_mount_option.yml
+  vars:
+    check_mount_path: /dev/shm
+    check_mount_option: nodev
+  name: >-
+    Perform check {{ cis_audit_item }} /
+    {{ check_mount_path }} /
+    {{ check_mount_option }}
   no_log: "{{ cis_no_log }}"
