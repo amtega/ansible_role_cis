@@ -1,38 +1,10 @@
 ---
 
-- name: Setup fact with check description
-  set_fact:
-    cis_check_description: Ensure suspicious packets are logged
-
-- name: >-
-    Gather data to ensure suspicious packets are logged - all -
-    /etc/sysctl**
-  command: >-
-    /usr/bin/grep "net\.ipv4\.conf\.all\.log_martians"
-    /etc/sysctl.conf /etc/sysctl.d/*
-  changed_when: no
-  failed_when: no
-  register: cis_gather_data_etc_sysctl_all_result
-
-- name: >-
-    Gather data to ensure suspicious packets are logged - default -
-    /etc/sysctl**
-  command: >-
-    /usr/bin/grep "net\.ipv4\.conf\.default\.log_martians"
-    /etc/sysctl.conf /etc/sysctl.d/*
-  changed_when: no
-  failed_when: no
-  register: cis_gather_data_etc_sysctl_default_result
-
-- debug:
-    var: cis_kernel_params
-- name: "{{ cis_check_description }}"
-  assert:
-    quiet: "{{ cis_quiet_assertions }}"
-    that:
-      - ("net.ipv4.conf.all.log_martians = 1" in cis_kernel_params)
-      - ("net.ipv4.conf.default.log_martians = 1" in cis_kernel_params)
-      - "cis_gather_data_etc_sysctl_all_result | length > 0"
-      - "cis_gather_data_etc_sysctl_default_result | length > 0"
-  register: cis_check_result
+- include_tasks: ../common/check_net_kernel_params.yml
+  vars:
+    description: Ensure suspicious packets are logged
+    protocol: ipv4
+    param_name: log_martians
+    desired_value: 1
+  name: "Perform {{ param_name }} {{ protocol }} netwok kernel module check"
   no_log: "{{ cis_no_log }}"
