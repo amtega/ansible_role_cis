@@ -1,14 +1,10 @@
 ---
 
-- name: Setup fact with check description
-  set_fact:
-    cis_check_description: Ensure ICMP redirects are not accepted
-
-- name: "{{ cis_check_description }}"
-  assert:
-    quiet: "{{ cis_quiet_assertions }}"
-    that:
-      - ("net.ipv4.conf.all.accept_redirects = 0" in cis_kernel_params)
-      - ("net.ipv4.conf.default.accept_redirects = 0" in cis_kernel_params)
-  register: cis_check_result
+- include_tasks: ../common/check_net_kernel_params.yml
+  vars:
+    description: Ensure ICMP redirects are not accepted
+    protocol: ipv4
+    param_name: accept_redirects
+    desired_value: 0
+  name: "Perform {{ param_name }} {{ protocol }} netwok kernel module check"
   no_log: "{{ cis_no_log }}"
