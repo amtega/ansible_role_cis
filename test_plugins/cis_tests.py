@@ -7,6 +7,7 @@ Tests:
     cis_good_rsyslog_perms: Auxiliary function for check 4.2.1.3
 """
 from __future__ import absolute_import, division, print_function
+import re
 
 __metaclass__ = type
 
@@ -208,6 +209,31 @@ def cis_passwd_field_not_empty(etc_passwd_lines):
     return result
 
 
+def cis_check_5_3_3_compliant(output):
+    """Parses check 5.3.3 commands outputs.
+
+    Args:
+      output (list): List of strings output of:
+        egrep '^password\s+sufficient\s+pam_unix.so' /etc/pam.d/password-auth
+        egrep '^password\s+sufficient\s+pam_unix.so' /etc/pam.d/system-auth
+        or:
+        egrep '^password\s+required\s+pam_pwhistory.so' /etc/pam.d/password-auth
+        egrep '^password\s+required\s+pam_pwhistory.so' /etc/pam.d/system-auth
+
+    Returns:
+        bool: returns true when 'remember'>=5 in all 'sufficient' or
+              'required' outputs
+    """
+    def remember_enough(line):
+        if not 'remember=' in line:
+            return False
+        match = re.search(r'^.*\sremember=(\d+).*$', line, flags=re.M)
+        if not match:
+            return False
+        remember_times = int(match.group(1))
+        is_enough = 5 <= remember_times
+        return is_enough
+    return all(remember_enough(lines) for lines in output)
 class TestModule:
     """ Ansible tests """
 
@@ -220,4 +246,5 @@ class TestModule:
             'cis_iptables_contains_ports': cis_iptables_contains_ports,
             'cis_passwd_field_not_empty': cis_passwd_field_not_empty,
             'cis_user_system_not_login': cis_user_system_not_login,
+            'cis_check_5_3_3_compliant': cis_check_5_3_3_compliant,
         }
