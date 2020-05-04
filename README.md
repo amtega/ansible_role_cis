@@ -27,7 +27,7 @@ This is an example playbook:
 Tests are based on molecule with vagrant virtual machines. Follow the instructions in `molecule/default/INSTALL.rst`.
 
 ```shell
-$ cd amtega.win_dns_records
+$ cd amtega.cis
 $ molecule test
 ```
 
