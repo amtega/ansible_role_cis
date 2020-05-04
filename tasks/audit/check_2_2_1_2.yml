@@ -7,24 +7,28 @@
 - name: Gather data to ensure ntp is configured - ntp.conf - restrict
   command: /usr/bin/grep "^restrict" /etc/ntp.conf
   changed_when: false
+  failed_when: false
   register: cis_gather_data_restrict_result
   no_log: "{{ cis_no_log }}"
 
 - name: Gather data to ensure ntp is configured - ntp.conf - server_pool
   command: /usr/bin/egrep "^(server|pool)" /etc/ntp.conf
   changed_when: false
+  failed_when: false
   register: cis_gather_data_server_pool_result
   no_log: "{{ cis_no_log }}"
 
 - name: Gather data to ensure ntp is configured - sysconfig/ntpd - options
   command: /usr/bin/grep "^OPTIONS" /etc/sysconfig/ntpd
   changed_when: false
+  failed_when: false
   register: cis_gather_data_options_result
   no_log: "{{ cis_no_log }}"
 
 - name: Gather data to ensure ntp is configured - ntpd.service - execstart
   command: /usr/bin/grep "^ExecStart" /usr/lib/systemd/system/ntpd.service
   changed_when: false
+  failed_when: false
   register: cis_gather_data_execstart_result
   no_log: "{{ cis_no_log }}"
 
