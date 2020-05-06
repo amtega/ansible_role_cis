@@ -8,8 +8,8 @@
   command: >-
     /usr/bin/grep \
     '^[^#]*hard core' /etc/security/limits.conf /etc/security/limits.d/*
-  changed_when: false
-  failed_when: false
+  changed_when: no
+  failed_when: no
   register: cis_gather_data_limits_result
 
 - name: Gather data to ensure core dumps are restricted - sysctl
@@ -20,8 +20,8 @@
 - name: Gather data to ensure core dumps are restricted - sysctl.conf
   command: >-
     /usr/bin/grep 'hard core' /etc/security/limits.conf /etc/security/limits.d/*
-  changed_when: false
-  failed_when: false
+  changed_when: no
+  failed_when: no
   register: cis_gather_data_sysctl_conf_result
 
 - name: "{{ cis_check_description }}"

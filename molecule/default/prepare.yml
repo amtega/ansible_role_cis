@@ -2,12 +2,12 @@
 
 - name: Prepare
   hosts: all
-  gather_facts: false
+  gather_facts: no
   tasks:
     - name: Install python for Ansible
       raw: test -e /usr/bin/python || (apt -y update && apt install -y python-minimal)
-      become: true
-      changed_when: false
+      become: yes
+      changed_when: no
 
 - name: Prepare testing environment
   hosts: all
