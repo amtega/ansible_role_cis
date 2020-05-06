@@ -7,6 +7,7 @@ Tests:
     cis_good_rsyslog_perms: Auxiliary function for check 4.2.1.3
 """
 from __future__ import absolute_import, division, print_function
+import re
 
 __metaclass__ = type
 
@@ -47,13 +48,10 @@ def cis_all_cis_at_least_restrictive_as(find_list, reference_permission):
         path = found_file["path"]
         mode = found_file["mode"]
         regular_file = found_file["isreg"]
-        if not regular_file or cis_at_least_restrictive_as(
-                                 mode,
-                                 reference_permission):
+        if not regular_file or cis_at_least_restrictive_as(mode, reference_permission):
             continue
         else:
-            DISPLAY.warning(
-                'check 4.2.4: Insecure permission (%s %s)' % (mode, path))
+            DISPLAY.warning("check 4.2.4: Insecure permission (%s %s)" % (mode, path))
             result = False
     return result
 
@@ -68,13 +66,14 @@ def cis_at_least_restrictive_as(str_permission, str_reference_permission):
     Returns:
         bool: returns true when the reference is equally or more restrictive
     """
+
     def str_to_perm(str_perm):
         """Convert a permission in string format to binary"""
         return int(str_perm, 8)
 
     permission = str_to_perm(str_permission)
     reference_permission = str_to_perm(str_reference_permission)
-    is_more_permissive = bool(permission & ~ reference_permission)
+    is_more_permissive = bool(permission & ~reference_permission)
     return not is_more_permissive
 
 
@@ -94,7 +93,7 @@ def cis_good_rsyslog_perms(grep_stdout_lines):
     for line in grep_stdout_lines:
         line_fields = line.split()
         permission = int(line_fields[1], 8)
-        bad_permission = bool(permission & ~  0o0640)
+        bad_permission = bool(permission & ~0o0640)
         print("{} {}".format(permission, bad_permission))
         result = result and not bad_permission
 
@@ -116,10 +115,10 @@ def cis_iptables_contains_ports(iptables_stdout_lines, open_ports):
     def parse_multiport(ports_to_parse):
         # Example: 1500:1501,1552:1553,1581
         ports_parsed = []
-        chunks = ports_to_parse.split(',')
+        chunks = ports_to_parse.split(",")
         for chunk in chunks:
-            if ':' in chunk:
-                begin, end = map(int, chunk.split(':'))
+            if ":" in chunk:
+                begin, end = map(int, chunk.split(":"))
                 ports_parsed.extend(range(begin, end + 1))
             else:
                 ports_parsed.append(int(chunk))
@@ -127,17 +126,17 @@ def cis_iptables_contains_ports(iptables_stdout_lines, open_ports):
 
     open_port_set = set()
     for port in open_ports:
-        if (port["address"] == '::1' or port["address"].startswith('127.')):
+        if port["address"] == "::1" or port["address"].startswith("127."):
             continue  # Exclude loopback
         open_port_set |= set([(port["protocol"], port["port"])])
 
     iptables_port_set = set()
     for line in iptables_stdout_lines:
-        if ('dpt' in line or 'dports' in line):
+        if "dpt" in line or "dports" in line:
             split_line = line.split()
             protocol = split_line[3]
-            if 'dpt' in line:
-                port = int(split_line[-1].split(':')[1])
+            if "dpt" in line:
+                port = int(split_line[-1].split(":")[1])
                 iptables_port_set |= set([(protocol, port)])
             else:
                 ports = parse_multiport(split_line[-1])
@@ -156,28 +155,26 @@ def cis_user_system_not_login(etc_passwd_lines):
         bool: returns true when system accounts are non-login.
     """
     result = True
-    for line in etc_passwd_lines.split('\n'):
+    for line in etc_passwd_lines.split("\n"):
         if line == "":
             continue
-        line_split = line.split(':')
+        line_split = line.split(":")
         if len(line_split) != 7:
             DISPLAY.warning(
-                'cis_user_system_not_login:Strange /etc/passwd line:\n%s'
-                % (line))
+                "cis_user_system_not_login:Strange /etc/passwd line:\n%s" % (line)
+            )
             continue
         (login, _passw, uid, _gid, _gecos, _directory, shell) = line_split
         uid = int(uid)
         shell = shell.strip()
-        if login.startswith('+') or login in ['root', 'sync', 'shutdown',
-                                              'halt']:
+        if login.startswith("+") or login in ["root", "sync", "shutdown", "halt"]:
             continue
         elif uid >= 1000:
             continue
-        elif shell in ['/sbin/nologin', '/bin/false']:
+        elif shell in ["/sbin/nologin", "/bin/false"]:
             continue
         else:
-            DISPLAY.warning('check 5.4.2: Sytem user %s have shell %s'
-                            % (login, shell))
+            DISPLAY.warning("check 5.4.2: Sytem user %s have shell %s" % (login, shell))
             result = False
     return result
 
@@ -192,20 +189,49 @@ def cis_passwd_field_not_empty(etc_passwd_lines):
         bool: returns true when password fields are not empty.
     """
     result = True
-    for line in etc_passwd_lines.split('\n'):
+    for line in etc_passwd_lines.split("\n"):
         if line == "":
             continue
-        line_split = line.split(':')
+        line_split = line.split(":")
         if len(line_split) != 7:
             DISPLAY.warning(
-                'cis_passwd_field_not_empty:Strange /etc/passwd line:\n%s'
-                % (line))
+                "cis_passwd_field_not_empty:Strange /etc/passwd line:\n%s" % (line)
+            )
             continue
         (login, passw, _uid, _gid, _gecos, _directory, _shell) = line_split
         if passw == "":
-            DISPLAY.warning('check 6.2.1: User without password: %s' % (login))
+            DISPLAY.warning("check 6.2.1: User without password: %s" % (login))
             result = False
     return result
+
+
+def cis_check_5_3_3_compliant(output):
+    """Parses check 5.3.3 commands outputs.
+
+    Args:
+      output (list): List of strings output of:
+        egrep '^password\s+sufficient\s+pam_unix.so' /etc/pam.d/password-auth
+        egrep '^password\s+sufficient\s+pam_unix.so' /etc/pam.d/system-auth
+        or:
+        egrep '^password\s+required\s+pam_pwhistory.so' /etc/pam.d/password-auth
+        egrep '^password\s+required\s+pam_pwhistory.so' /etc/pam.d/system-auth
+
+    Returns:
+        bool: returns true when 'remember'>=5 in all 'sufficient' or
+              'required' outputs
+    """
+
+    def remember_enough(line):
+        if "remember=" not in line:
+            return False
+        match = re.search(r"^.*\sremember=(\d+).*$", line, flags=re.M)
+        if not match:
+            return False
+        remember_times = int(match.group(1))
+        is_enough = 5 <= remember_times
+        return is_enough
+
+    return all(remember_enough(lines) for lines in output)
 
 
 class TestModule:
@@ -213,11 +239,11 @@ class TestModule:
 
     def tests(self):
         return {
-            "cis_all_cis_at_least_restrictive_as":
-                cis_all_cis_at_least_restrictive_as,
+            "cis_all_cis_at_least_restrictive_as": cis_all_cis_at_least_restrictive_as,
             "cis_search_words": cis_search_words,
-            'cis_good_rsyslog_perms': cis_good_rsyslog_perms,
-            'cis_iptables_contains_ports': cis_iptables_contains_ports,
-            'cis_passwd_field_not_empty': cis_passwd_field_not_empty,
-            'cis_user_system_not_login': cis_user_system_not_login,
+            "cis_good_rsyslog_perms": cis_good_rsyslog_perms,
+            "cis_iptables_contains_ports": cis_iptables_contains_ports,
+            "cis_passwd_field_not_empty": cis_passwd_field_not_empty,
+            "cis_user_system_not_login": cis_user_system_not_login,
+            "cis_check_5_3_3_compliant": cis_check_5_3_3_compliant,
         }

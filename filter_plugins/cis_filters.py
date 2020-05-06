@@ -16,7 +16,7 @@ def cis_script_variable_value(variable_declarations):
     """
 
     if variable_declarations:
-        return variable_declarations.split('\n')[-1].split('=')[1]
+        return variable_declarations.split("\n")[-1].split("=")[1]
     else:
         return ""
 

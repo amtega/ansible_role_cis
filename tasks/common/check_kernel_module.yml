@@ -12,6 +12,7 @@
 - name: "Gather modprobe data about {{ check_filesystem_type }}"
   command: "/usr/sbin/modprobe -n -v {{ check_filesystem_type }}"
   changed_when: false
+  failed_when: false
   register: cis_gather_modprobe_data_result
   no_log: "{{ cis_no_log }}"
 

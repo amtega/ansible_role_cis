@@ -1,0 +1,56 @@
+---
+
+- name: Setup fact with check description
+  set_fact:
+    cis_check_description: Ensure password reuse is limited
+
+- name: >-
+    Gather data to ensure password reuse is limited - password-auth sufficient
+  command: >-
+    /usr/bin/egrep '^password\s+sufficient\s+pam_unix.so'
+    /etc/pam.d/password-auth
+  changed_when: no
+  failed_when: no
+  register: cis_gather_data_password_sufficient_result
+
+- name: >-
+    Gather data to ensure password reuse is limited - system-auth sufficient
+  command: >-
+    /usr/bin/egrep '^password\s+sufficient\s+pam_unix.so' /etc/pam.d/system-auth
+  changed_when: no
+  failed_when: no
+  register: cis_gather_data_system_sufficient_result
+
+- name: >-
+    Gather data to ensure password reuse is limited - password-auth required
+  command: >-
+    /usr/bin/egrep '^password\s+required\s+pam_pwhistory.so'
+    /etc/pam.d/password-auth
+  changed_when: no
+  failed_when: no
+  register: cis_gather_data_password_required_result
+
+- name: >-
+    Gather data to ensure password reuse is limited - system-auth required
+  command: >-
+    /usr/bin/egrep '^password\s+required\s+pam_pwhistory.so'
+    /etc/pam.d/system-auth
+  changed_when: no
+  failed_when: no
+  register: cis_gather_data_system_required_result
+
+- name: "{{ cis_check_description }}"
+  vars:
+    output_on_sufficient:
+      - "{{ cis_gather_data_password_sufficient_result.stdout }}"
+      - "{{ cis_gather_data_system_sufficient_result.stdout }}"
+    output_on_required:
+      - "{{ cis_gather_data_password_required_result.stdout }}"
+      - "{{ cis_gather_data_system_required_result.stdout }}"
+  assert:
+    quiet: "{{ cis_quiet_assertions }}"
+    that: >-
+      (output_on_sufficient is cis_check_5_3_3_compliant)
+      or (output_on_required is cis_check_5_3_3_compliant)
+  register: cis_check_result
+  no_log: "{{ cis_no_log }}"

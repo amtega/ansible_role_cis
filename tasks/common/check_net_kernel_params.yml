@@ -1,0 +1,43 @@
+---
+
+- name: Setup fact with check description
+  set_fact:
+    cis_check_description: "{{ description }}"
+
+- name: >-
+    Gather /etc/sysctl** data - net.{{ protocol }}.conf.all.{{ param_name }}
+  command: >-
+    /usr/bin/grep --no-filename "net\.{{ protocol }}\.conf\.all\.{{ param_name }}"
+    /etc/sysctl.conf /etc/sysctl.d/*
+  changed_when: no
+  failed_when: no
+  register: cis_gather_data_etc_sysctl_all_result
+
+- name: >-
+    Gather /etc/sysctl** data - net.{{ protocol }}.conf.default.{{ param_name }}
+  command: >-
+    /usr/bin/grep --no-filename "net\.{{ protocol }}\.conf\.default\.{{ param_name }}"
+    /etc/sysctl.conf /etc/sysctl.d/*
+  changed_when: no
+  failed_when: no
+  register: cis_gather_data_etc_sysctl_default_result
+
+- name: "{{ cis_check_description }}"
+  vars:
+    desired_output_all: >-
+      net.{{ protocol }}.conf.all.{{ param_name }} = {{ desired_value }}
+    desired_output_default: >-
+      net.{{ protocol }}.conf.default.{{ param_name }} = {{ desired_value }}
+  assert:
+    quiet: "{{ cis_quiet_assertions }}"
+    that:
+      - (desired_output_all in cis_kernel_params)
+      - (desired_output_default in cis_kernel_params)
+      - >-
+        (desired_output_all
+        in cis_gather_data_etc_sysctl_all_result.stdout_lines)
+      - >-
+        (desired_output_default
+        in cis_gather_data_etc_sysctl_default_result.stdout_lines)
+  register: cis_check_result
+  no_log: "{{ cis_no_log }}"

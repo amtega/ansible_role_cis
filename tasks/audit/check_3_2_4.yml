@@ -4,7 +4,7 @@
   vars:
     description: Ensure suspicious packets are logged
     protocol: ipv4
-    param_name: secure_redirects
-    desired_value: 0
+    param_name: log_martians
+    desired_value: 1
   name: "Perform {{ param_name }} {{ protocol }} netwok kernel module check"
   no_log: "{{ cis_no_log }}"

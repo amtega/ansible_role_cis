@@ -2,9 +2,9 @@
 
 - include_tasks: ../common/check_net_kernel_params.yml
   vars:
-    description: Ensure suspicious packets are logged
+    description: Ensure packet redirect sending is disabled
     protocol: ipv4
-    param_name: secure_redirects
+    param_name: send_redirects
     desired_value: 0
   name: "Perform {{ param_name }} {{ protocol }} netwok kernel module check"
   no_log: "{{ cis_no_log }}"

@@ -6,13 +6,13 @@
 
 - name: Gather data to ensure no unconfined daemons exist
   shell: |-
-    set -o pipefail # Raise internal pipe errors
     ps -eZ \
     | egrep "initrc" \
     | egrep -vw "tr|ps|egrep|bash|awk" \
     | tr ':' ' ' \
     | awk '{ print $NF }'
   changed_when: false
+  failed_when: false
   register: cis_gather_data_result
   no_log: "{{ cis_no_log }}"
 

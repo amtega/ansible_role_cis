@@ -6,7 +6,7 @@
       Ensure default user shell timeout is 900 seconds or less
 
 - name: Gather TMOUT from /etc/profile and /etc/bashrc
-  shell: >-
+  shell: |-
     set -o pipefail # Raise internal pipe errors
     /usr/bin/cat /etc/profile /etc/bashrc | /usr/bin/grep "^TMOUT"
   changed_when: no
