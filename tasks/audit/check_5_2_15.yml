@@ -1,0 +1,8 @@
+---
+
+- include_tasks: ../common/check_sshd.yml
+  vars:
+    description: Ensure SSH warning banner is configured
+    value: banner /etc/issue.net
+  name: "Perform sshd config contains: {{ value }}"
+  no_log: "{{ cis_no_log }}"
