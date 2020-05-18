@@ -1,0 +1,33 @@
+---
+
+- name: Setup fact with check description
+  set_fact:
+    cis_check_description: Ensure SSH access is limited
+
+- name: "{{ cis_check_description }}"
+  vars:
+    allowusers: >-
+      {{ cis_sshd_config
+      | to_json | from_json
+      | json_query('[?starts_with(@, `allowusers`) == `true`]') }}
+    allowgroups: >-
+      {{ cis_sshd_config
+      | to_json | from_json
+      | json_query('[?starts_with(@, `allowgroups`) == `true`]') }}
+    denyusers: >-
+      {{ cis_sshd_config
+      | to_json | from_json
+      | json_query('[?starts_with(@, `denyusers`) == `true`]') }}
+    denygroups: >-
+      {{ cis_sshd_config
+      | to_json | from_json
+      | json_query('[?starts_with(@, `denygroups`) == `true`]') }}
+  assert:
+    quiet: "{{ cis_quiet_assertions }}"
+    that: >-
+      (allowusers | length > 0)
+      or (allowgroups | length > 0)
+      or (denyusers | length > 0)
+      or (denygroups | length > 0)
+  register: cis_check_result
+  no_log: "{{ cis_no_log }}"
