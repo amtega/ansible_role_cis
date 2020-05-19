@@ -29,6 +29,6 @@
       (algorithms | difference(allowed) | list | length == 0)
       and (algorithms | length > 0)
     fail_msg: >-
-      Disallowed algorithms: {{ algorithms | list | difference(allowed)}}
+      Disallowed algorithms: {{ algorithms | list | difference(allowed) }}
   register: cis_check_result
   no_log: "{{ cis_no_log }}"
