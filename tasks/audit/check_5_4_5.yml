@@ -6,8 +6,8 @@
       Ensure default user shell timeout is 900 seconds or less
 
 - name: Gather TMOUT from /etc/profile and /etc/bashrc
-  command: |-
-    /usr/bin/grep "^TMOUT" /etc/profile /etc/bashrc
+  shell: |-
+    /usr/bin/grep "^TMOUT" /etc/profile /etc/profile.d/* /etc/bashrc
   changed_when: no
   failed_when: no
   register: cis_gather_data_tmout_result
