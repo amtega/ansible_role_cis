@@ -2,7 +2,7 @@
 
 - include_tasks: ../common/check_sshd.yml
   vars:
-    description: Ensure SSH LogLevel is set to INFO
-    value: loglevel INFO
+    description: Ensure SSH PermitUserEnvironment is disabled
+    value: permituserenvironment no
   name: "Perform sshd config contains: {{ value }}"
   no_log: "{{ cis_no_log }}"

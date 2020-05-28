@@ -1,0 +1,34 @@
+---
+
+- name: Setup fact with check description
+  set_fact:
+    cis_check_description: Ensure only approved MAC algorithms are used
+
+- name: "{{ cis_check_description }}"
+  vars:
+    allowed:
+      - hmac-sha2-512-etm@openssh.com
+      - hmac-sha2-256-etm@openssh.com
+      - umac-128-etm@openssh.com
+      - hmac-sha2-512
+      - hmac-sha2-256
+      - umac-128@openssh.com
+    algorithms: >-
+      {{( macs
+      | first
+      | default(' ')).split(' ')[1].split(',')
+      | list }}
+    # Workaround: https://github.com/ansible-collections/community.general/issues/320
+    macs: >-
+      {{ cis_sshd_config
+      | to_json | from_json
+      | json_query('[?starts_with(@, `macs`) == `true`]') }}
+  assert:
+    quiet: "{{ cis_quiet_assertions }}"
+    that: >-
+      (algorithms | difference(allowed) | list | length == 0)
+      and (algorithms | length > 0)
+    fail_msg: >-
+      Disallowed algorithms: {{ algorithms | list | difference(allowed) }}
+  register: cis_check_result
+  no_log: "{{ cis_no_log }}"

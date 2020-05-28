@@ -4,19 +4,20 @@ from __future__ import absolute_import, division, print_function
 __metaclass__ = type
 
 
-def cis_script_variable_value(variable_declarations):
+def cis_script_variable_value(variable_declarations, delimiter="="):
     """Parses script variable declaration lines and returns value
 
     Args:
         variable_declarations (string): string with variable declaration lines
-            formated VAR=VALUE
+            formated VAR=VALUE, being '=' the default delimiter string
+        delimiter (string): string delimiting VAR and VALUE
 
     Returns:
         string: last value declared
     """
 
     if variable_declarations:
-        return variable_declarations.split("\n")[-1].split("=")[1]
+        return variable_declarations.split("\n")[-1].split(delimiter)[1]
     else:
         return ""
 

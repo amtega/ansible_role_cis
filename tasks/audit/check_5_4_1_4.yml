@@ -1,0 +1,53 @@
+---
+
+- name: Setup fact with check description
+  set_fact:
+    cis_check_description: >-
+      Ensure inactive password lock is 30 days or less
+
+- name: >-
+    Gather data to to ensure inactive password lock is 30 days or less
+    - useradd
+  shell: |-
+    set -o pipefail # Raise internal pipe errors
+    /sbin/useradd -D | /bin/grep INACTIVE
+  changed_when: no
+  failed_when: no
+  register: cis_useradd_result
+  no_log: "{{ cis_no_log }}"
+
+
+- name: >-
+    Gather data to to ensure inactive password lock is 30 days or less
+    - /etc/shadow
+  shell: |-
+    set -o pipefail # Raise internal pipe errors
+    /bin/egrep ^[^:]+:[^\!*] /etc/shadow | /bin/cut -d: -f7
+  changed_when: no
+  failed_when: no
+  register: cis_etc_shadow_result
+  no_log: "{{ cis_no_log }}"
+
+- name: "{{ cis_check_description }}"
+  vars:
+    default_expiration: >-
+      {{ (cis_useradd_result.stdout
+      | default ('INACTIVE=-1')).split('=')[1] }}
+    users_expiration_min: >-
+      {{ cis_etc_shadow_result.stdout_lines
+      | default([])
+      | min }}
+    users_expiration_max: >-
+      {{ cis_etc_shadow_result.stdout_lines
+      | default([])
+      | max }}
+  assert:
+    quiet: "{{ cis_quiet_assertions }}"
+    that:
+      - "default_expiration | int > 0"
+      - "default_expiration | int <= 30"
+      - "users_expiration_min | length > 0"
+      - "users_expiration_min | int > 0"
+      - "users_expiration_max | int <= 30"
+  register: cis_check_result
+  no_log: "{{ cis_no_log }}"

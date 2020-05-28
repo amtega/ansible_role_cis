@@ -48,13 +48,10 @@ def cis_all_cis_at_least_restrictive_as(find_list, reference_permission):
         path = found_file["path"]
         mode = found_file["mode"]
         regular_file = found_file["isreg"]
-        if not regular_file or cis_at_least_restrictive_as(
-                                                        mode,
-                                                        reference_permission):
+        if not regular_file or cis_at_least_restrictive_as(mode, reference_permission):
             continue
         else:
-            DISPLAY.warning(
-                "check 4.2.4: Insecure permission (%s %s)" % (mode, path))
+            DISPLAY.warning("check 4.2.4: Insecure permission (%s %s)" % (mode, path))
             result = False
     return result
 
@@ -70,14 +67,47 @@ def cis_at_least_restrictive_as(str_permission, str_reference_permission):
         bool: returns true when the reference is equally or more restrictive
     """
 
-    def str_to_perm(str_perm):
-        """Convert a permission in string format to binary"""
-        return int(str_perm, 8)
-
-    permission = str_to_perm(str_permission)
-    reference_permission = str_to_perm(str_reference_permission)
+    permission = octal_str_to_int(str_permission)
+    reference_permission = octal_str_to_int(str_reference_permission)
     is_more_permissive = bool(permission & ~reference_permission)
     return not is_more_permissive
+
+
+def octal_str_to_int(str_perm):
+    """Convert a octal permission in string format to integer
+
+    Args:
+        str_perm (string): octal string representing a file permission
+
+    Returns:
+        int: returns the permissions as int (it's bynary representation)
+    """
+    return int(str_perm, 8)
+
+
+def cis_umasks_at_least_restrictive_as(commands, str_reference_permission):
+    """Compare a list of umask commands against a reference octal permission.
+
+    Args:
+        commands (string list): umask commands in script
+        str_reference_permission (string): reference umask
+
+    Returns:
+        bool: returns true when the reference is equally or more restrictive
+    """
+
+    def is_restrictive_enough(str_permission):
+        """Check one umask against the reference"""
+        permission = octal_str_to_int(str_permission)
+        reference_permission = octal_str_to_int(str_reference_permission)
+        if permission == reference_permission:
+            return True
+        is_more_permissive = bool(~permission & reference_permission)
+        return not is_more_permissive
+
+    return all(
+        is_restrictive_enough(command.strip().split()[1]) for command in commands
+    )
 
 
 def cis_good_rsyslog_perms(grep_stdout_lines):
@@ -164,25 +194,20 @@ def cis_user_system_not_login(etc_passwd_lines):
         line_split = line.split(":")
         if len(line_split) != 7:
             DISPLAY.warning(
-                "cis_user_system_not_login:Strange /etc/passwd line:\n%s"
-                % (line)
+                "cis_user_system_not_login:Strange /etc/passwd line:\n%s" % (line)
             )
             continue
         (login, _passw, uid, _gid, _gecos, _directory, shell) = line_split
         uid = int(uid)
         shell = shell.strip()
-        if login.startswith("+") or login in ["root",
-                                              "sync",
-                                              "shutdown",
-                                              "halt"]:
+        if login.startswith("+") or login in ["root", "sync", "shutdown", "halt"]:
             continue
         elif uid >= 1000:
             continue
         elif shell in ["/sbin/nologin", "/bin/false"]:
             continue
         else:
-            DISPLAY.warning(
-                "check 5.4.2: Sytem user %s have shell %s" % (login, shell))
+            DISPLAY.warning("check 5.4.2: Sytem user %s have shell %s" % (login, shell))
             result = False
     return result
 
@@ -203,8 +228,7 @@ def cis_passwd_field_not_empty(etc_passwd_lines):
         line_split = line.split(":")
         if len(line_split) != 7:
             DISPLAY.warning(
-                "cis_passwd_field_not_empty:Strange /etc/passwd line:\n%s"
-                % (line)
+                "cis_passwd_field_not_empty:Strange /etc/passwd line:\n%s" % (line)
             )
             continue
         (login, passw, _uid, _gid, _gecos, _directory, _shell) = line_split
@@ -250,12 +274,12 @@ class TestModule:
 
     def tests(self):
         return {
-            "cis_all_cis_at_least_restrictive_as":
-                cis_all_cis_at_least_restrictive_as,
+            "cis_all_cis_at_least_restrictive_as": cis_all_cis_at_least_restrictive_as,
             "cis_search_words": cis_search_words,
             "cis_good_rsyslog_perms": cis_good_rsyslog_perms,
             "cis_iptables_contains_ports": cis_iptables_contains_ports,
             "cis_passwd_field_not_empty": cis_passwd_field_not_empty,
             "cis_user_system_not_login": cis_user_system_not_login,
             "cis_check_5_3_3_compliant": cis_check_5_3_3_compliant,
+            "cis_umasks_at_least_restrictive_as": cis_umasks_at_least_restrictive_as,
         }

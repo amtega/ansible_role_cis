@@ -5,6 +5,7 @@
     cis_check_description: Ensure SSH Protocol is set to 2
 
 - name: Gather data to to ensure SSH Protocol is set to 2
+  # Strangely ommited from `sshd -T` (cis_sshd_config)
   lineinfile:
     name: /etc/ssh/sshd_config
     regexp: '^Protocol\s+2'

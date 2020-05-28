@@ -1,0 +1,37 @@
+---
+
+- name: Setup fact with check description
+  set_fact:
+    cis_check_description: >-
+      Ensure default user umask is 027 or more restrictive
+
+- name: Gather umask from /etc/bashrc
+  command: >-
+    /usr/bin/egrep --no-filename "^\\s*umask\\s+" /etc/bashrc
+  changed_when: no
+  failed_when: no
+  register: cis_bashrc_result
+
+- name: Gather umask from /etc/profile /etc/profile.d/*.sh
+  command: >-
+    /usr/bin/egrep --no-filename "^\\s*umask\\s+"
+    /etc/profile /etc/profile.d/*.sh
+  changed_when: no
+  failed_when: no
+  register: cis_profile_result
+
+- name: "{{ cis_check_description }}"
+  vars:
+    bashrc_umask: >-
+      {{ cis_bashrc_result.stdout | cis_script_variable_value }}
+  assert:
+    quiet: "{{ cis_quiet_assertions }}"
+    that:
+      - >-
+        cis_bashrc_result.stdout_lines
+        is cis_umasks_at_least_restrictive_as("027")
+      - >-
+        cis_profile_result.stdout_lines
+        is cis_umasks_at_least_restrictive_as("027")
+  register: cis_check_result
+  no_log: "{{ cis_no_log }}"

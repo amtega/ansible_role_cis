@@ -1,0 +1,24 @@
+---
+
+- name: Setup fact with check description
+  set_fact:
+    cis_check_description: Ensure /etc/hosts.deny is configured
+
+- name: "Gather content from /etc/hosts.deny"
+  command: /usr/bin/egrep "^\\s*ALL\\s*:\\s*ALL\\s*$" /etc/hosts.deny
+  changed_when: no
+  failed_when: no
+  register: cis_gather_data_result
+
+- name: "{{ cis_check_description }}"
+  vars:
+    trimmed_value: >-
+      {{ cis_gather_data_result.stdout
+      | regex_replace('\s+', '' ) }}
+  assert:
+    quiet: "{{ cis_quiet_assertions }}"
+    that:
+      - "trimmed_value | length > 0"
+      - "trimmed_value == 'ALL:ALL'"
+  register: cis_check_result
+  no_log: "{{ cis_no_log }}"

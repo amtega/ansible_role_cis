@@ -7,8 +7,7 @@
 
 - name: Gather TMOUT from /etc/profile and /etc/bashrc
   shell: |-
-    set -o pipefail # Raise internal pipe errors
-    /usr/bin/cat /etc/profile /etc/bashrc | /usr/bin/grep "^TMOUT"
+    /usr/bin/grep "^TMOUT" /etc/profile /etc/profile.d/* /etc/bashrc
   changed_when: no
   failed_when: no
   register: cis_gather_data_tmout_result
