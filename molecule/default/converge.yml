@@ -2,11 +2,10 @@
 
 - name: Converge
   hosts: all
+  gather_facts: no
   become: yes
-
   roles:
-    - role: amtega.cis
-
+    - amtega.cis
   tasks:
     - name: Show results
       debug: var=cis_results_fact

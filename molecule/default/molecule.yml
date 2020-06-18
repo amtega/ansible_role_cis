@@ -6,107 +6,121 @@ driver:
   name: vagrant
   provider:
     name: virtualbox
-lint:
-  name: yamllint
+lint: |
+  set -e
+  export ANSIBLE_ACTION_PLUGINS=$PWD/action_plugins
+  export ANSIBLE_BECOME_PLUGINS=$PWD/become_plugins
+  export ANSIBLE_CACHE_PLUGINS=$PWD/cache_plugins
+  export ANSIBLE_CALLBACK_PLUGINS=$PWD/callback_plugins
+  export ANSIBLE_CLICONF_PLUGINS=$PWD/cliconf_plugins
+  export ANSIBLE_CONNECTION_PLUGINS=$PWD/connection_plugins
+  export ANSIBLE_DOC_FRAGMENT_PLUGINS=$PWD/doc_fragment_plugins
+  export ANSIBLE_FILTER_PLUGINS=$PWD/filter_plugins
+  export ANSIBLE_HTTPAPI_PLUGINS=$PWD/httpapi_plugins
+  export ANSIBLE_INVENTORY_PLUGINS=$PWD/inventory_plugins
+  export ANSIBLE_LIBRARY=$PWD/library
+  export ANSIBLE_LOOKUP_PLUGINS=$PWD/lookup_plugins
+  export ANSIBLE_NETCONF_PLUGINS=$PWD/netconf_plugins
+  export ANSIBLE_STRATEGY_PLUGINS=$PWD/strategy_plugins
+  export ANSIBLE_TERMINAL_PLUGINS=$PWD/terminal_plugins
+  export ANSIBLE_TEST_PLUGINS=$PWD/test_plugins
+  export ANSIBLE_VARS_PLUGINS=$PWD/vars_plugins
+  yamllint .
+  ansible-lint
+  flake8
 platforms:
-  - name: centos7
+  - name: "centos7-${INSTANCE_UUID:-1}"
     box: centos/7
 provisioner:
   name: ansible
-  lint:
-    name: ansible-lint
   inventory:
-    group_vars:
+    hosts:
       all:
-        cis_fail_at_non_fulfilment: no
-        cis_quiet_assertions: no
-        cis_no_log: no
-    host_vars:
-      centos7:
-        cis_audit:
-          - 1.1.1.1
-          - 1.1.1.2
-          - 1.1.1.3
-          - 1.1.1.4
-          - 1.1.1.5
-          - 1.1.1.6
-          - 1.1.1.7
-          - 1.1.1.8
-          - 1.1.2
-          - 1.1.3
-          - 1.1.4
-          - 1.1.5
-          - 1.1.6
-          - 1.1.7
-          - 1.1.8
-          - 1.1.9
-          - 1.1.10
-          - 1.1.11
-          - 1.1.12
-          - 1.1.13
-          - 1.1.14
-          - 1.1.15
-          - 1.1.16
-          - 1.1.17
-          - 1.1.21
-          - 1.3.1
-          - 1.3.2
-          - 1.4.1
-          - 1.4.2
-          - 1.5.1
-          - 1.5.3
-          - 1.5.4
-          - 1.6.1.2
-          - 1.6.1.3
-          - 1.6.1.6
-          - 2.1.7
-          - 2.2.1.2
-          - 2.2.2
-          - 2.3.4
-          - 2.3.5
-          - 3.1.2
-          - 3.2.1
-          - 3.2.2
-          - 3.2.3
-          - 3.2.4
-          - 3.2.7
-          - 3.3.2
-          - 3.4.3
-          - 3.6.2
-          - 3.6.5
-          - 4.1.16
-          - 4.2.1.3
-          - 4.2.1.4
-          - 4.2.4
-          - 5.1.2
-          - 5.1.3
-          - 5.1.4
-          - 5.1.5
-          - 5.1.6
-          - 5.1.7
-          - 5.2.2
-          - 5.2.3
-          - 5.2.4
-          - 5.2.5
-          - 5.2.6
-          - 5.2.7
-          - 5.2.8
-          - 5.2.9
-          - 5.2.10
-          - 5.2.11
-          - 5.2.12
-          - 5.2.13
-          - 5.2.14
-          - 5.2.15
-          - 5.3.2
-          - 5.3.3
-          - 5.4.1.4
-          - 5.4.2
-          - 5.4.4
-          - 5.4.5
-          - 6.2.1
-
+        vars:
+          cis_fail_at_non_fulfilment: no
+          cis_quiet_assertions: no
+          cis_no_log: no
+          cis_audit:
+            - 1.1.1.1
+            - 1.1.1.2
+            - 1.1.1.3
+            - 1.1.1.4
+            - 1.1.1.5
+            - 1.1.1.6
+            - 1.1.1.7
+            - 1.1.1.8
+            - 1.1.2
+            - 1.1.3
+            - 1.1.4
+            - 1.1.5
+            - 1.1.6
+            - 1.1.7
+            - 1.1.8
+            - 1.1.9
+            - 1.1.10
+            - 1.1.11
+            - 1.1.12
+            - 1.1.13
+            - 1.1.14
+            - 1.1.15
+            - 1.1.16
+            - 1.1.17
+            - 1.1.21
+            - 1.3.1
+            - 1.3.2
+            - 1.4.1
+            - 1.4.2
+            - 1.5.1
+            - 1.5.3
+            - 1.5.4
+            - 1.6.1.2
+            - 1.6.1.3
+            - 1.6.1.6
+            - 2.1.7
+            - 2.2.1.2
+            - 2.2.2
+            - 2.3.4
+            - 2.3.5
+            - 3.1.2
+            - 3.2.1
+            - 3.2.2
+            - 3.2.3
+            - 3.2.4
+            - 3.2.7
+            - 3.3.2
+            - 3.4.3
+            - 3.6.2
+            - 3.6.5
+            - 4.1.16
+            - 4.2.1.3
+            - 4.2.1.4
+            - 4.2.4
+            - 5.1.2
+            - 5.1.3
+            - 5.1.4
+            - 5.1.5
+            - 5.1.6
+            - 5.1.7
+            - 5.2.2
+            - 5.2.3
+            - 5.2.4
+            - 5.2.5
+            - 5.2.6
+            - 5.2.7
+            - 5.2.8
+            - 5.2.9
+            - 5.2.10
+            - 5.2.11
+            - 5.2.12
+            - 5.2.13
+            - 5.2.14
+            - 5.2.15
+            - 5.3.2
+            - 5.3.3
+            - 5.4.1.4
+            - 5.4.2
+            - 5.4.4
+            - 5.4.5
+            - 6.2.1
 verifier:
-  name: testinfra
-  lint:
-    name: flake8
+  name: ansible
