@@ -19,7 +19,7 @@
 
 - name: "{{ cis_check_description }}"
   assert:
-    quiet: yes
+    quiet: "{{ cis_quiet_assertions }}"
     that: item is search(full_pattern)
   loop:
     - "{{ cis_read_etc_pam_d_password_auth_result.stdout }}"

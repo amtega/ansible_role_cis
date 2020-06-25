@@ -12,7 +12,7 @@
 
 - name: "{{ cis_check_description }}"
   assert:
-    quiet: yes
+    quiet: "{{ cis_quiet_assertions }}"
     that: >-
       cis_read_boot_grub2_grub_result.stdout_lines
       | select("search", "^GRUB2_PASSWORD")

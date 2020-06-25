@@ -14,6 +14,8 @@
     etc_passwd_lines: "{{ cis_etc_passwd_result['content'] | b64decode }}"
   assert:
     quiet: "{{ cis_quiet_assertions }}"
-    that: etc_passwd_lines is cis_user_system_not_login()
+    that: >-
+      etc_passwd_lines
+      is cis_user_system_not_login(cis_users_allowed_interactive_shell)
   register: cis_check_result
   no_log: "{{ cis_no_log }}"

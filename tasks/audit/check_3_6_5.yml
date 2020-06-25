@@ -14,8 +14,7 @@
   listen_ports_facts:
 
 - name: Gather data to to ensure firewall rules exist for all open ports
-  command: >-
-    /sbin/iptables -L -n
+  command: /sbin/iptables -L -n
   changed_when: no
   register: cis_firewall_rules_result
   no_log: "{{ cis_no_log }}"

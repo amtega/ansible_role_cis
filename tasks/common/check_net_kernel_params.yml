@@ -6,18 +6,28 @@
 
 - name: >-
     Gather /etc/sysctl** data - net.{{ protocol }}.conf.all.{{ param_name }}
-  command: >-
-    /usr/bin/grep --no-filename "net\.{{ protocol }}\.conf\.all\.{{ param_name }}"
-    /etc/sysctl.conf /etc/sysctl.d/*
+  shell: >-
+    /usr/bin/grep
+    --no-filename
+    "net\.{{ protocol }}\.conf\.all\.{{ param_name }}"
+    /etc/sysctl.conf
+    /etc/sysctl.d/*
+  args:
+    warn: no
   changed_when: no
   failed_when: no
   register: cis_gather_data_etc_sysctl_all_result
 
 - name: >-
     Gather /etc/sysctl** data - net.{{ protocol }}.conf.default.{{ param_name }}
-  command: >-
-    /usr/bin/grep --no-filename "net\.{{ protocol }}\.conf\.default\.{{ param_name }}"
-    /etc/sysctl.conf /etc/sysctl.d/*
+  shell: >-
+    /usr/bin/grep
+    --no-filename
+    "net\.{{ protocol }}\.conf\.default\.{{ param_name }}"
+    /etc/sysctl.conf
+    /etc/sysctl.d/*
+  args:
+    warn: no
   changed_when: no
   failed_when: no
   register: cis_gather_data_etc_sysctl_default_result
@@ -26,18 +36,25 @@
   vars:
     desired_output_all: >-
       net.{{ protocol }}.conf.all.{{ param_name }} = {{ desired_value }}
+
     desired_output_default: >-
       net.{{ protocol }}.conf.default.{{ param_name }} = {{ desired_value }}
+
+    gathered_output_all: >-
+      {{ cis_gather_data_etc_sysctl_all_result.stdout_lines
+         | map("regex_replace", "(.*) *= *(.*)", "\1 = \2")
+         | list }}
+
+    gathered_output_default: >-
+      {{ cis_gather_data_etc_sysctl_default_result.stdout_lines
+         | map("regex_replace", "(.*) *= *(.*)", "\1 = \2")
+         | list }}
   assert:
     quiet: "{{ cis_quiet_assertions }}"
     that:
-      - (desired_output_all in cis_kernel_params)
-      - (desired_output_default in cis_kernel_params)
-      - >-
-        (desired_output_all
-        in cis_gather_data_etc_sysctl_all_result.stdout_lines)
-      - >-
-        (desired_output_default
-        in cis_gather_data_etc_sysctl_default_result.stdout_lines)
+      - desired_output_all in cis_kernel_params
+      - desired_output_default in cis_kernel_params
+      - desired_output_all in gathered_output_all
+      - desired_output_default in gathered_output_default
   register: cis_check_result
   no_log: "{{ cis_no_log }}"
