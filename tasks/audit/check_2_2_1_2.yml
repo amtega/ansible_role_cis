@@ -6,6 +6,7 @@
 
 - name: Gather data to ensure ntp is configured - ntp.conf - restrict
   shell: >-
+    set -o pipefail # Raise internal pipe errors
     /usr/bin/grep "^restrict" /etc/ntp.conf
     | grep -E "{{ regexp_list_restrict_4 }}"
     ;
