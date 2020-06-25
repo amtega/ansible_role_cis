@@ -27,6 +27,9 @@ def cis_search_words(string, words):
         bool: true if all words are present or false if any word is missing
         or any string component is not in words.
     """
+    print("################")
+    print(string)
+    print(words)
     set_string = set(string.split(" "))
     set_words = set(words.split(" "))
     return set_string == set_words
@@ -180,11 +183,12 @@ def cis_iptables_contains_ports(iptables_stdout_lines, open_ports):
     return (open_port_set - iptables_port_set) == set()
 
 
-def cis_user_system_not_login(etc_passwd_lines):
+def cis_user_system_not_login(etc_passwd_lines, exclude_logins=[]):
     """Parses /etc/passwd lines.
 
     Args:
         etc_passwd_lines (list): strings with /etc/passwd content
+        exclude_logins (list): strings with usernames allowed to login
 
     Returns:
         bool: returns true when system accounts are non-login.
@@ -209,6 +213,8 @@ def cis_user_system_not_login(etc_passwd_lines):
         elif uid >= 1000:
             continue
         elif shell in ["/sbin/nologin", "/bin/false"]:
+            continue
+        elif login in exclude_logins:
             continue
         else:
             DISPLAY.warning("check 5.4.2: Sytem user %s have shell %s"

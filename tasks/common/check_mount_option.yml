@@ -9,12 +9,15 @@
 - name: "{{ cis_check_description }}"
   assert:
     quiet: "{{ cis_quiet_assertions }}"
-    that:
-      - >-
-        (check_mount_option
-         in (ansible_facts
-             | json_query("mounts[?mount=='" + check_mount_path + "'].options")
-             | default('')
-             | join('')))
+    that: >-
+      ansible_facts.mounts
+      | selectattr("mount", "equalto", check_mount_path)
+      | list
+      | length == 0
+      or ansible_facts.mounts
+         | selectattr("mount", "equalto", check_mount_path)
+         | selectattr("options", "search", check_mount_option)
+         | list
+         | length > 0
   register: cis_check_result
   no_log: "{{ cis_no_log }}"

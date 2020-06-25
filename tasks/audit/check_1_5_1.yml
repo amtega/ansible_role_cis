@@ -5,9 +5,11 @@
     cis_check_description: Ensure core dumps are restricted
 
 - name: Gather data to ensure core dumps are restricted - limits
-  command: >-
-    /usr/bin/grep \
-    '^[^#]*hard core' /etc/security/limits.conf /etc/security/limits.d/*
+  shell: >-
+    /usr/bin/grep -E
+    '^[^#].*\*.*hard|-.*core.*0' /etc/security/limits.conf /etc/security/limits.d/*
+  args:
+    warn: no
   changed_when: no
   failed_when: no
   register: cis_gather_data_limits_result
@@ -18,8 +20,13 @@
   register: cis_gather_data_sysctl_result
 
 - name: Gather data to ensure core dumps are restricted - sysctl.conf
-  command: >-
-    /usr/bin/grep 'hard core' /etc/security/limits.conf /etc/security/limits.d/*
+  shell: >-
+    grep --no-filename
+    "fs\.suid_dumpable *= *0"
+    /etc/sysctl.conf
+    /etc/sysctl.d/*
+  args:
+    warn: no
   changed_when: no
   failed_when: no
   register: cis_gather_data_sysctl_conf_result
@@ -28,8 +35,8 @@
   assert:
     quiet: "{{ cis_quiet_assertions }}"
     that:
-      - cis_gather_data_limits_result.stdout | length == 0
+      - cis_gather_data_limits_result.stdout | length > 0
       - cis_gather_data_sysctl_result.stdout == 'fs.suid_dumpable = 0'
-      - cis_gather_data_sysctl_conf_result.stdout == 'fs.suid_dumpable = 0'
+      - cis_gather_data_sysctl_conf_result.stdout_lines | length > 0
   register: cis_check_result
   no_log: "{{ cis_no_log }}"

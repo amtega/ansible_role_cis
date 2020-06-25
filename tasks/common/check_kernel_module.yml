@@ -19,9 +19,8 @@
 - name: "{{ cis_check_description }}"
   assert:
     quiet: "{{ cis_quiet_assertions }}"
-    that:
-      - '"install /bin/true" in cis_gather_modprobe_data_result.stdout'
-      - 'cis_gather_modprobe_data_result.stderr  | length == 0'
-      - '"{{ check_filesystem_type }}" not in cis_kernel_modules'
+    that: >-
+      '"{{ check_filesystem_type }}" not in cis_kernel_modules'
+      or '"install /bin/true" in cis_gather_modprobe_data_result.stdout'
   register: cis_check_result
   no_log: "{{ cis_no_log }}"

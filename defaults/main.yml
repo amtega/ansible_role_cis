@@ -21,6 +21,10 @@ cis_fail_at_non_fulfilment: no
 
 cis_quiet_assertions: yes
 
+# Indicate usernames that are allowed to have interactive shell
+
+cis_users_allowed_interactive_shell: []
+
 # Hide sensitive information
 
 cis_no_log: yes

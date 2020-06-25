@@ -5,15 +5,15 @@
     cis_check_description: Ensure filesystem integrity is regularly checked
 
 - name: Gather data to ensure filesystem integrity checks - /bin/crontab
-  command: >-
-    /bin/crontab -u root -l
+  command: /bin/crontab -u root -l
   changed_when: no
   failed_when: no
   register: cis_gather_data_bin_crontab_result
 
 - name: Gather data to ensure filesystem integrity checks - /etc/cron*
-  command: >-
-    /usr/bin/grep -r aide /etc/cron.* /etc/crontab
+  shell: /usr/bin/grep -r aide /etc/cron.* /etc/crontab
+  args:
+    warn: no
   changed_when: no
   failed_when: no
   register: cis_gather_data_etc_cron_result

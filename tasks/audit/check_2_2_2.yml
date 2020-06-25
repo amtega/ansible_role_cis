@@ -7,9 +7,10 @@
 - name: "{{ cis_check_description }}"
   vars:
     x11_installed_packages: >-
-      {{ ansible_facts
-      | json_query('packages.keys(@)[?starts_with(@, `xorg-x11-`) == `true`]')
-      | list }}
+      {{ ansible_facts.packages.keys()
+         | reject("search", "xorg-x11-font.*")
+         | select("search", "xorg-x11-.*")
+         | list }}
   assert:
     quiet: "{{ cis_quiet_assertions }}"
     that:
