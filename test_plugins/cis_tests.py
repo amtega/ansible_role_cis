@@ -27,9 +27,6 @@ def cis_search_words(string, words):
         bool: true if all words are present or false if any word is missing
         or any string component is not in words.
     """
-    print("################")
-    print(string)
-    print(words)
     set_string = set(string.split(" "))
     set_words = set(words.split(" "))
     return set_string == set_words
