@@ -10,9 +10,11 @@
   set_fact:
     cis_check_description: "{{ description }}"
 
-- name: "Check {{ pattern }} in {{ files }}"
-  command: >-
-    /usr/bin/grep {{ options | default('') }} "{{ pattern }}" {{ files }}
+- name: "Check {{ pattern }} in {{ files }}" # noqa 305
+  shell: >-
+    /usr/bin/grep -E {{ options | default('') }} "{{ pattern }}" {{ files }}
+  args:
+    warn: no
   changed_when: no
   failed_when: no
   register: cis_gather_data_result
