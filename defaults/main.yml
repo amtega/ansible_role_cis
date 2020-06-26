@@ -25,6 +25,10 @@ cis_quiet_assertions: yes
 
 cis_users_allowed_interactive_shell: []
 
+# Pattern to check rsyslog is configured to send logs to a remote log host
+
+cis_users_rsyslog_remote_log_pattern: "^*.*[^I][^I]*@"
+
 # Hide sensitive information
 
 cis_no_log: yes

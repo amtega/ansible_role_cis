@@ -4,7 +4,7 @@
   vars:
     description: >-
       Ensure rsyslog is configured to send logs to a remote log host
-    pattern: "^*.*[^I][^I]*@"
+    pattern: "{{ cis_users_rsyslog_remote_log_pattern }}"
     files: "/etc/rsyslog.conf /etc/rsyslog.d/*.conf"
   name: >-
     Perform egrep {{ pattern }} in {{ files }}
