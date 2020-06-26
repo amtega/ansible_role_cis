@@ -1,0 +1,26 @@
+---
+
+# Parameters:
+#  description: CIS check description
+#  options: grep options
+#  pattern: grep pattern
+#  files: files to grep
+
+- name: Setup fact with check description
+  set_fact:
+    cis_check_description: "{{ description }}"
+
+- name: "Check {{ pattern }} in {{ files }}"
+  command: >-
+    /usr/bin/grep {{ options | default('') }} "{{ pattern }}" {{ files }}
+  changed_when: no
+  failed_when: no
+  register: cis_gather_data_result
+
+- name: "{{ cis_check_description }}"
+  assert:
+    quiet: "{{ cis_quiet_assertions }}"
+    that:
+      - "cis_gather_data_result.stdout | length > 0"
+  register: cis_check_result
+  no_log: "{{ cis_no_log }}"
