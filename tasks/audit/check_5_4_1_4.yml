@@ -16,7 +16,6 @@
   register: cis_useradd_result
   no_log: "{{ cis_no_log }}"
 
-
 - name: >-
     Gather data to to ensure inactive password lock is 30 days or less
     - /etc/shadow
