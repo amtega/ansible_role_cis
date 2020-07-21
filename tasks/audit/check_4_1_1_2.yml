@@ -7,6 +7,7 @@
     file: /etc/audit/auditd.conf
     separator: " = "
     parameter: space_left_action
+    lower_current_value: yes
     value: email
     value_type: string
     comparison: "=="
@@ -24,6 +25,7 @@
     file: /etc/audit/auditd.conf
     separator: " = "
     parameter: action_mail_acct
+    lower_current_value: yes
     value: root
     value_type: string
     comparison: "=="
@@ -42,6 +44,7 @@
     file: /etc/audit/auditd.conf
     separator: " = "
     parameter: admin_space_left_action
+    lower_current_value: yes
     value: halt
     value_type: string
     comparison: "=="
