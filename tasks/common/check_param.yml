@@ -15,7 +15,7 @@
     separator: "{{ delimiter | default(' ') }}"
     current_value: >-
       {{ cis_gather_data_result.stdout
-      | cis_script_variable_value(delimiter=separator) }}
+         | cis_script_variable_value(delimiter=separator | default("=")) }}
   assert:
     quiet: "{{ cis_quiet_assertions }}"
     that:
