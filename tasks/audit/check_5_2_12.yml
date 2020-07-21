@@ -2,21 +2,26 @@
 
 - include_tasks: ../common/check_param.yml
   vars:
-    description: Ensure SSH Idle Timeout Interval is configured
+    description: >-
+      Ensure SSH Idle Timeout Interval is configured
+      (ClientAliveInterval >= 1)
     file: /etc/ssh/sshd_config
     parameter: ClientAliveInterval
-    # delimiter: ' '
     value: 1
     value_type: int
     comparison: ">="
   name: "Check {{ parameter }}{{ comparison }}{{ value }} in {{ file }}"
   no_log: "{{ cis_no_log }}"
 
+- name: Setup fact with partial check result
+  set_fact:
+    cis_partial_check_result_1: "{{ cis_check_result }}"
+
 - include_tasks: ../common/check_param.yml
-  # Chaining checks
-  when: not cis_check_result is failed
   vars:
-    description: Ensure SSH Idle Timeout Interval is configured
+    description: >-
+      Ensure SSH Idle Timeout Interval is configured
+      (ClientAliveInterval <= 300)
     file: /etc/ssh/sshd_config
     parameter: ClientAliveInterval
     value: 300
@@ -25,14 +30,37 @@
   name: "Check {{ parameter }}{{ comparison }}{{ value }} in {{ file }}"
   no_log: "{{ cis_no_log }}"
 
+- name: Setup fact with partial check result
+  set_fact:
+    cis_partial_check_result_2: "{{ cis_check_result }}"
+
 - include_tasks: ../common/check_param.yml
-  when: not cis_check_result is failed
   vars:
-    description: Ensure SSH Idle Timeout Interval is configured
+    description: >-
+      Ensure SSH Idle Timeout Interval is configured
+      (ClientAliveCountMax == 3)
     file: /etc/ssh/sshd_config
     parameter: ClientAliveCountMax
     value: 3
     value_type: int
     comparison: "<="
   name: "Check {{ parameter }}{{ comparison }}{{ value }} in {{ file }}"
+  no_log: "{{ cis_no_log }}"
+
+- name: Setup fact with partial check result
+  set_fact:
+    cis_partial_check_result_3: "{{ cis_check_result }}"
+
+- name: Setup fact with check description
+  set_fact:
+    cis_check_description: Ensure SSH Idle Timeout Interval is configured
+
+- name: "{{ cis_check_description }}"
+  assert:
+    quiet: "{{ cis_quiet_assertions }}"
+    that:
+      - cis_partial_check_result_1 is success
+      - cis_partial_check_result_2 is success
+      - cis_partial_check_result_3 is success
+  register: cis_check_result
   no_log: "{{ cis_no_log }}"
