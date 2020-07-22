@@ -5,29 +5,38 @@
     cis_check_description: >-
       Ensure system administrator actions (sudolog) are collected
 
-- name: Gather data from audit.rules
-  command: >-
-    /usr/bin/grep actions /etc/audit/audit.rules
+- name: Gather data from audit.rules and /etc/audit/rules.d/*.rules
+  shell: >-
+    grep --no-filename actions
+    /etc/audit/audit.rules /etc/audit/rules.d/*.rules
+  args:
+    warn: no
   changed_when: no
   failed_when: no
   register: cis_gather_data_audit_rules_result
 
 - name: Gather data from auditctl
-  command: >-
-    /usr/sbin/auditctl -l
+  shell: auditctl -l | grep actions
+  args:
+    warn: no
   changed_when: no
   failed_when: no
   register: cis_gather_data_auditctl_result
 
 - name: "{{ cis_check_description }}"
   vars:
-    desired_output: "-w /var/log/sudo.log -p wa -k actions"
+    desired_output:
+      - "-w /var/log/sudo.log -p wa -k actions"
   assert:
     quiet: "{{ cis_quiet_assertions }}"
     that:
-      - "cis_gather_data_audit_rules_result.stdout | length > 0"
-      - "cis_gather_data_auditctl_result.stdout | length > 0"
-      - "desired_output in cis_gather_data_audit_rules_result.stdout"
-      - "desired_output in cis_gather_data_auditctl_result.stdout"
+      - cis_gather_data_audit_rules_result.stdout | length > 0
+      - cis_gather_data_auditctl_result.stdout | length > 0
+      - >-
+        desired_output
+        is subset(cis_gather_data_audit_rules_result.stdout_lines)
+      - >-
+        desired_output
+        is subset(cis_gather_data_auditctl_result.stdout_lines)
   register: cis_check_result
   no_log: "{{ cis_no_log }}"
