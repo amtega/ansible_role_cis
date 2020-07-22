@@ -14,8 +14,14 @@
   vars:
     separator: "{{ delimiter | default(' ') }}"
     current_value: >-
-      {{ cis_gather_data_result.stdout
-      | cis_script_variable_value(delimiter=separator) }}
+      {{ (lower_current_value | default(false) | bool)
+         | ternary(cis_gather_data_result.stdout
+                   | cis_script_variable_value(
+                   delimiter=separator | default("="))
+                   | lower,
+                   cis_gather_data_result.stdout
+                   | cis_script_variable_value(
+                       delimiter=separator | default("="))) }}
   assert:
     quiet: "{{ cis_quiet_assertions }}"
     that:

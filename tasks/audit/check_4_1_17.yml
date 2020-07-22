@@ -3,11 +3,11 @@
 - name: Setup fact with check description
   set_fact:
     cis_check_description: >-
-      Ensure system administrator actions (sudolog) are collected
+      Ensure kernel module loading and unloading is collected
 
 - name: Gather data from audit.rules and /etc/audit/rules.d/*.rules
   shell: >-
-    grep --no-filename actions
+    grep --no-filename modules
     /etc/audit/audit.rules /etc/audit/rules.d/*.rules
   args:
     warn: no
@@ -16,7 +16,7 @@
   register: cis_gather_data_audit_rules_result
 
 - name: Gather data from auditctl
-  shell: auditctl -l | grep actions
+  shell: auditctl -l | grep modules
   args:
     warn: no
   changed_when: no
@@ -25,8 +25,21 @@
 
 - name: "{{ cis_check_description }}"
   vars:
-    desired_output:
-      - "-w /var/log/sudo.log -p wa -k actions"
+    desired_output_32:
+      - "-w /sbin/insmod -p x -k modules"
+      - "-w /sbin/rmmod -p x -k modules"
+      - "-w /sbin/modprobe -p x -k modules"
+      - "-a always,exit -F arch=b32 -S init_module -S delete_module -k modules"
+
+    desired_output_64:
+      - "-w /sbin/insmod -p x -k modules"
+      - "-w /sbin/rmmod -p x -k modules"
+      - "-w /sbin/modprobe -p x -k modules"
+      - "-a always,exit -F arch=b64 -S init_module -S delete_module -k modules"
+
+    desired_output: >-
+      {{ (ansible_facts.architecture == "x86_64")
+         | ternary(desired_output_64, desired_output_32) }}
   assert:
     quiet: "{{ cis_quiet_assertions }}"
     that:

@@ -3,12 +3,14 @@
 - name: Setup fact with check description
   set_fact:
     cis_check_description: >-
-      Ensure system administrator actions (sudolog) are collected
+      Ensure session initiation information is collected
 
 - name: Gather data from audit.rules and /etc/audit/rules.d/*.rules
   shell: >-
-    grep --no-filename actions
-    /etc/audit/audit.rules /etc/audit/rules.d/*.rules
+    grep --no-filename session
+    /etc/audit/audit.rules /etc/audit/rules.d/*.rules ;
+    grep --no-filename logins
+    /etc/audit/audit.rules /etc/audit/rules.d/*.rule
   args:
     warn: no
   changed_when: no
@@ -16,7 +18,9 @@
   register: cis_gather_data_audit_rules_result
 
 - name: Gather data from auditctl
-  shell: auditctl -l | grep actions
+  shell: >-
+    auditctl -l | grep session ;
+    auditctl -l | grep logins
   args:
     warn: no
   changed_when: no
@@ -26,7 +30,9 @@
 - name: "{{ cis_check_description }}"
   vars:
     desired_output:
-      - "-w /var/log/sudo.log -p wa -k actions"
+      - "-w /var/run/utmp -p wa -k session"
+      - "-w /var/log/wtmp -p wa -k logins"
+      - "-w /var/log/btmp -p wa -k logins"
   assert:
     quiet: "{{ cis_quiet_assertions }}"
     that:

@@ -1,0 +1,66 @@
+---
+
+- name: Setup fact with check description
+  set_fact:
+    cis_check_description: >-
+      Ensure events that modify the system's network environment are collected
+
+- name: Gather data from audit.rules and /etc/audit/rules.d/*.rules
+  shell: >-
+    grep --no-filename system-locale
+    /etc/audit/audit.rules /etc/audit/rules.d/*.rules
+  args:
+    warn: no
+  changed_when: no
+  failed_when: no
+  register: cis_gather_data_audit_rules_result
+
+- name: Gather data from auditctl
+  shell: auditctl -l | grep system-locale
+  args:
+    warn: no
+  changed_when: no
+  failed_when: no
+  register: cis_gather_data_auditctl_result
+
+- name: "{{ cis_check_description }}"
+  vars:
+    desired_output_32:
+      - >-
+        -a always,exit -F arch=b32 -S sethostname -S setdomainname
+        -k system-locale
+      - "-w /etc/issue -p wa -k system-locale"
+      - "-w /etc/issue.net -p wa -k system-locale"
+      - "-w /etc/hosts -p wa -k system-locale"
+      - "-w /etc/sysconfig/network -p wa -k system-locale"
+      - "-w /etc/sysconfig/network-scripts/ -p wa -k system-locale"
+
+    desired_output_64:
+      - >-
+        -a always,exit -F arch=b64 -S sethostname -S setdomainname
+        -k system-locale
+      - >-
+        -a always,exit -F arch=b32 -S sethostname -S setdomainname
+        -k system-locale
+      - "-w /etc/issue -p wa -k system-locale"
+      - "-w /etc/issue.net -p wa -k system-locale"
+      - "-w /etc/hosts -p wa -k system-locale"
+      - "-w /etc/sysconfig/network -p wa -k system-locale"
+      - "-w /etc/sysconfig/network-scripts/ -p wa -k system-locale"
+
+    desired_output: >-
+      {{ (ansible_facts.architecture == "x86_64")
+         | ternary(desired_output_64, desired_output_32) }}
+  assert:
+    quiet: "{{ cis_quiet_assertions }}"
+    that:
+      - cis_gather_data_audit_rules_result.stdout | length > 0
+      - cis_gather_data_auditctl_result.stdout | length > 0
+      - >-
+        desired_output
+        is subset(cis_gather_data_audit_rules_result.stdout_lines)
+      - >-
+        desired_output
+        is subset(cis_gather_data_auditctl_result.stdout_lines)
+  register: cis_check_result
+  no_log: "{{ cis_no_log }}"

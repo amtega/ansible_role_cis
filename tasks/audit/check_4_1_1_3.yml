@@ -1,0 +1,14 @@
+---
+
+- include_tasks: ../common/check_param.yml
+  vars:
+    description: Ensure audit logs are not automatically deleted
+    file: /etc/audit/auditd.conf
+    separator: " = "
+    parameter: max_log_file_action
+    lower_current_value: yes
+    value: keep_logs
+    value_type: string
+    comparison: "=="
+  name: "Check {{ parameter }}{{ comparison }}{{ value }} in {{ file }}"
+  no_log: "{{ cis_no_log }}"

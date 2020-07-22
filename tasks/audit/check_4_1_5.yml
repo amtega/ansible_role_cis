@@ -3,11 +3,11 @@
 - name: Setup fact with check description
   set_fact:
     cis_check_description: >-
-      Ensure system administrator actions (sudolog) are collected
+      Ensure events that modify user/group information are collected
 
 - name: Gather data from audit.rules and /etc/audit/rules.d/*.rules
   shell: >-
-    grep --no-filename actions
+    grep --no-filename identity
     /etc/audit/audit.rules /etc/audit/rules.d/*.rules
   args:
     warn: no
@@ -16,7 +16,7 @@
   register: cis_gather_data_audit_rules_result
 
 - name: Gather data from auditctl
-  shell: auditctl -l | grep actions
+  shell: auditctl -l | grep identity
   args:
     warn: no
   changed_when: no
@@ -26,7 +26,11 @@
 - name: "{{ cis_check_description }}"
   vars:
     desired_output:
-      - "-w /var/log/sudo.log -p wa -k actions"
+      - "-w /etc/group -p wa -k identity"
+      - "-w /etc/passwd -p wa -k identity"
+      - "-w /etc/gshadow -p wa -k identity"
+      - "-w /etc/shadow -p wa -k identity"
+      - "-w /etc/security/opasswd -p wa -k identity"
   assert:
     quiet: "{{ cis_quiet_assertions }}"
     that:

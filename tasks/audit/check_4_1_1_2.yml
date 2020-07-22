@@ -3,13 +3,14 @@
 - include_tasks: ../common/check_param.yml
   vars:
     description: >-
-      Ensure SSH Idle Timeout Interval is configured
-      (ClientAliveInterval >= 1)
-    file: /etc/ssh/sshd_config
-    parameter: ClientAliveInterval
-    value: 1
-    value_type: int
-    comparison: ">="
+      Ensure system is disabled when audit logs are full (space_left_action)
+    file: /etc/audit/auditd.conf
+    separator: " = "
+    parameter: space_left_action
+    lower_current_value: yes
+    value: email
+    value_type: string
+    comparison: "=="
   name: "Check {{ parameter }}{{ comparison }}{{ value }} in {{ file }}"
   no_log: "{{ cis_no_log }}"
 
@@ -20,13 +21,14 @@
 - include_tasks: ../common/check_param.yml
   vars:
     description: >-
-      Ensure SSH Idle Timeout Interval is configured
-      (ClientAliveInterval <= 300)
-    file: /etc/ssh/sshd_config
-    parameter: ClientAliveInterval
-    value: 300
-    value_type: int
-    comparison: "<="
+      Ensure system is disabled when audit logs are full (action_mail_acct)
+    file: /etc/audit/auditd.conf
+    separator: " = "
+    parameter: action_mail_acct
+    lower_current_value: yes
+    value: root
+    value_type: string
+    comparison: "=="
   name: "Check {{ parameter }}{{ comparison }}{{ value }} in {{ file }}"
   no_log: "{{ cis_no_log }}"
 
@@ -37,13 +39,15 @@
 - include_tasks: ../common/check_param.yml
   vars:
     description: >-
-      Ensure SSH Idle Timeout Interval is configured
-      (ClientAliveCountMax == 3)
-    file: /etc/ssh/sshd_config
-    parameter: ClientAliveCountMax
-    value: 3
-    value_type: int
-    comparison: "<="
+      Ensure system is disabled when audit logs are full
+      (admin_space_left_action)
+    file: /etc/audit/auditd.conf
+    separator: " = "
+    parameter: admin_space_left_action
+    lower_current_value: yes
+    value: halt
+    value_type: string
+    comparison: "=="
   name: "Check {{ parameter }}{{ comparison }}{{ value }} in {{ file }}"
   no_log: "{{ cis_no_log }}"
 
@@ -53,7 +57,7 @@
 
 - name: Setup fact with check description
   set_fact:
-    cis_check_description: Ensure SSH Idle Timeout Interval is configured
+    cis_check_description: Ensure system is disabled when audit logs are full
 
 - name: "{{ cis_check_description }}"
   assert:
