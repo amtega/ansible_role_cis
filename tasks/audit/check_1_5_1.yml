@@ -6,7 +6,7 @@
 
 - name: Gather data to ensure core dumps are restricted - limits
   shell: >-
-    set -o pipefail # Raise internal pipe errors
+    set -o pipefail ;
     /usr/bin/grep -E
     '^[^#].*\*.*hard|-.*core.*0'
     /etc/security/limits.conf
