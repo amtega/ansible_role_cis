@@ -19,6 +19,7 @@
 
 - name: Gather data from auditctl
   shell: >-
+    set -o pipefail ;
     auditctl -l | grep session ;
     auditctl -l | grep logins
   args:

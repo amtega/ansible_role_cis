@@ -7,7 +7,7 @@
 
 - name: Gather data to ensure sticky bit on all world-writeable directories
   shell: |-
-    set -o pipefail # Raise internal pipe errors
+    set -o pipefail ;
     df --local -P \
     | awk {'if (NR!=1) print $6'} \
     | xargs -I '{}' find '{}' -xdev -type d \( -perm -0002 -a ! -perm -1000 \)

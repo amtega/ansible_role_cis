@@ -17,7 +17,7 @@
   register: cis_gather_data_audit_rules_result
 
 - name: Gather data from auditctl
-  shell: auditctl -l | grep perm_mod
+  shell: set -o pipefail ; auditctl -l | grep perm_mod
   args:
     warn: no
   changed_when: no
