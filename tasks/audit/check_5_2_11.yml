@@ -18,7 +18,8 @@
       | first
       | default(' ')).split(' ')[1].split(',')
       | list }}
-    # Workaround: https://github.com/ansible-collections/community.general/issues/320
+    # Workaround:
+    # https://github.com/ansible-collections/community.general/issues/320
     macs: >-
       {{ cis_sshd_config
       | to_json | from_json
