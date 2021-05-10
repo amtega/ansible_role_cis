@@ -2,9 +2,9 @@
 # Role tasks
 
 - environment:
-      PATH: "{{ ansible_env.PATH }}:/usr/sbin:/sbin"
-      # Ensure default english language
-      LANG:
+    PATH: "{{ ansible_env.PATH }}:/usr/sbin:/sbin"
+    # Ensure default english language
+    LANG:
   block:
     - name: Setup fact with supported audit checks
       set_fact:

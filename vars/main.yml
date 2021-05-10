@@ -1,7 +1,11 @@
 ---
 # Role variables
 
-# Suppoert audit items
+# CIS guide version
+
+cis_version: 2.2.0
+
+# Supported audit items
 
 cis_supported_audit_checks:
   - 1.1.1.1

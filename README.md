@@ -2,6 +2,8 @@
 
 This is an [Ansible](http://www.ansible.com) role which runs CIS RHEL 7 security benchmarks.
 
+You can find the list of checks implemented by the role in the file `vars/main.yml` within the variable `cis_supported_audit_checks`.
+
 ## Role Variables
 
 A list of all the default variables for this role is available in `defaults/main.yml`. The role setup the following facts:
