@@ -3,11 +3,12 @@
 
 galaxy_info:
   role_name: cis
+  namespace: amtega
   author: Juan Antonio Valiño García / Daniel Sánchez Fábregas
   description: Run CIS RHEL 7 security benchmarks
   company: AMTEGA - Xunta de Galicia
   license: GPLv3 or EUPL
-  min_ansible_version: 2.9
+  min_ansible_version: 2.10
   platforms:
     - name: EL
       versions:
