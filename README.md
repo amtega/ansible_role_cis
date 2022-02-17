@@ -31,12 +31,12 @@ Tests are based on [molecule with vagrant virtual machines](https://molecule.rea
 ```shell
 cd amtega.cis
 
-molecule test
+molecule test --all
 ```
 
 ## License
 
-Copyright (C) 2020 AMTEGA - Xunta de Galicia
+Copyright (C) 2022 AMTEGA - Xunta de Galicia
 
 This role is free software: you can redistribute it and/or modify it under the terms of:
 
