@@ -1,20 +1,20 @@
 ---
 
 - name: Setup fact with check description
-  set_fact:
+  ansible.builtin.set_fact:
     cis_check_description: >-
       Ensure auditing for processes that start prior to auditd is enabled
 
 - name: >-
     Gather data to ensure auditing for processes that start prior to auditd is
     enabled
-  command: grep "linux[0-9]* /" /boot/grub2/grub.cfg
+  ansible.builtin.command: grep "linux[0-9]* /" /boot/grub2/grub.cfg
   changed_when: no
   failed_when: no
   register: cis_gather_data_grub_result
 
 - name: "{{ cis_check_description }}"
-  assert:
+  ansible.builtin.assert:
     quiet: "{{ cis_quiet_assertions }}"
     that: >-
       cis_gather_data_grub_result.stdout_lines

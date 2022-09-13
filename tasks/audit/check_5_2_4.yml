@@ -1,6 +1,6 @@
 ---
 
-- include_tasks: ../common/check_sshd.yml
+- ansible.builtin.include_tasks: ../common/check_sshd.yml
   vars:
     description: Ensure SSH X11 forwarding is disabled
     value: x11forwarding no

@@ -4,20 +4,21 @@
   vars:
     filesystem_description: >-
       {{ check_filesystem_description | default(check_filesystem_type) }}
-  set_fact:
+  ansible.builtin.set_fact:
     cis_check_description: >-
       Ensure mounting of {{ filesystem_description }} filesystems
       is disabled
 
 - name: "Gather modprobe data about {{ check_filesystem_type }}"
-  command: "/usr/sbin/modprobe -n -v {{ check_filesystem_type }}"
+  ansible.builtin.command: >-
+    /usr/sbin/modprobe -n -v {{ check_filesystem_type }}
   changed_when: no
   failed_when: no
   register: cis_gather_modprobe_data_result
   no_log: "{{ cis_no_log }}"
 
 - name: "{{ cis_check_description }}"
-  assert:
+  ansible.builtin.assert:
     quiet: "{{ cis_quiet_assertions }}"
     that: >-
       '"{{ check_filesystem_type }}" not in cis_kernel_modules'

@@ -1,11 +1,11 @@
 ---
 
 - name: Setup fact with check description
-  set_fact:
+  ansible.builtin.set_fact:
     cis_check_description: Ensure ntp is configured
 
 - name: Gather data to ensure ntp is configured - ntp.conf - restrict
-  shell: >-
+  ansible.builtin.shell: >-
     set -o pipefail ;
     /usr/bin/grep "^restrict" /etc/ntp.conf
     | grep -E "{{ regexp_list_restrict_4 }}"
@@ -25,28 +25,29 @@
       ^restrict\\s+-6\\s+?default(\\s+(kod|nomodify|notrap|nopeer|noquery)){5}
 
 - name: Gather data to ensure ntp is configured - ntp.conf - server_pool
-  command: /usr/bin/egrep "^(server|pool)" /etc/ntp.conf
+  ansible.builtin.command: /usr/bin/egrep "^(server|pool)" /etc/ntp.conf
   changed_when: no
   failed_when: no
   register: cis_gather_data_server_pool_result
   no_log: "{{ cis_no_log }}"
 
 - name: Gather data to ensure ntp is configured - sysconfig/ntpd - options
-  command: /usr/bin/grep "^OPTIONS" /etc/sysconfig/ntpd
+  ansible.builtin.command: /usr/bin/grep "^OPTIONS" /etc/sysconfig/ntpd
   changed_when: no
   failed_when: no
   register: cis_gather_data_options_result
   no_log: "{{ cis_no_log }}"
 
 - name: Gather data to ensure ntp is configured - ntpd.service - execstart
-  command: /usr/bin/grep "^ExecStart" /usr/lib/systemd/system/ntpd.service
+  ansible.builtin.command: >-
+    /usr/bin/grep "^ExecStart" /usr/lib/systemd/system/ntpd.service
   changed_when: no
   failed_when: no
   register: cis_gather_data_execstart_result
   no_log: "{{ cis_no_log }}"
 
 - name: "{{ cis_check_description }}"
-  assert:
+  ansible.builtin.assert:
     quiet: "{{ cis_quiet_assertions }}"
     that:
       - cis_gather_data_restrict_result.stdout_lines | length > 0

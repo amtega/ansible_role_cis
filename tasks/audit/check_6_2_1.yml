@@ -1,16 +1,16 @@
 ---
 
 - name: Setup fact with check description
-  set_fact:
+  ansible.builtin.set_fact:
     cis_check_description: Ensure password fields are not empty
 
 - name: Gather data to to ensure system accounts are non-login
-  slurp:
+  ansible.builtin.slurp:
     src: /etc/passwd
   register: cis_etc_passwd_result
 
 - name: "{{ cis_check_description }}"
-  assert:
+  ansible.builtin.assert:
     quiet: "{{ cis_quiet_assertions }}"
     that: etc_passwd_lines is cis_passwd_field_not_empty
   register: cis_check_result

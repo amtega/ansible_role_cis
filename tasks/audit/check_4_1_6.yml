@@ -1,12 +1,12 @@
 ---
 
 - name: Setup fact with check description
-  set_fact:
+  ansible.builtin.set_fact:
     cis_check_description: >-
       Ensure events that modify the system's network environment are collected
 
 - name: Gather data from audit.rules and /etc/audit/rules.d/*.rules
-  shell: >-
+  ansible.builtin.shell: >-
     grep --no-filename system-locale
     /etc/audit/audit.rules /etc/audit/rules.d/*.rules
   args:
@@ -16,7 +16,7 @@
   register: cis_gather_data_audit_rules_result
 
 - name: Gather data from auditctl
-  shell: set -o pipefail ; auditctl -l | grep system-locale
+  ansible.builtin.shell: set -o pipefail ; auditctl -l | grep system-locale
   args:
     warn: no
   changed_when: no
@@ -51,7 +51,7 @@
     desired_output: >-
       {{ (ansible_facts.architecture == "x86_64")
          | ternary(desired_output_64, desired_output_32) }}
-  assert:
+  ansible.builtin.assert:
     quiet: "{{ cis_quiet_assertions }}"
     that:
       - cis_gather_data_audit_rules_result.stdout | length > 0

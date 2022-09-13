@@ -1,18 +1,18 @@
 ---
 
 - name: Setup fact with check description
-  set_fact:
+  ansible.builtin.set_fact:
     cis_check_description: Ensure permissions on all logfiles are configured
 
 - name: Gather data to to ensure permissions on all logfiles are configured
-  find:
+  ansible.builtin.find:
     paths: /var/log/
     file_type: file
     recurse: yes
   register: cis_log_files_result
 
 - name: "{{ cis_check_description }}"
-  assert:
+  ansible.builtin.assert:
     quiet: "{{ cis_quiet_assertions }}"
     # g-wx,o-rwx
     that: >-

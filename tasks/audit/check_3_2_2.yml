@@ -1,6 +1,6 @@
 ---
 
-- include_tasks: ../common/check_net_kernel_params.yml
+- ansible.builtin.include_tasks: ../common/check_net_kernel_params.yml
   vars:
     description: Ensure ICMP redirects are not accepted
     protocol: ipv4
