@@ -1,6 +1,6 @@
 ---
 
-- include_tasks: ../common/check_param.yml
+- ansible.builtin.include_tasks: ../common/check_param.yml
   vars:
     description: >-
       Ensure system is disabled when audit logs are full (space_left_action)
@@ -15,10 +15,10 @@
   no_log: "{{ cis_no_log }}"
 
 - name: Setup fact with partial check result
-  set_fact:
+  ansible.builtin.set_fact:
     cis_partial_check_result_1: "{{ cis_check_result }}"
 
-- include_tasks: ../common/check_param.yml
+- ansible.builtin.include_tasks: ../common/check_param.yml
   vars:
     description: >-
       Ensure system is disabled when audit logs are full (action_mail_acct)
@@ -33,10 +33,10 @@
   no_log: "{{ cis_no_log }}"
 
 - name: Setup fact with partial check result
-  set_fact:
+  ansible.builtin.set_fact:
     cis_partial_check_result_2: "{{ cis_check_result }}"
 
-- include_tasks: ../common/check_param.yml
+- ansible.builtin.include_tasks: ../common/check_param.yml
   vars:
     description: >-
       Ensure system is disabled when audit logs are full
@@ -52,15 +52,15 @@
   no_log: "{{ cis_no_log }}"
 
 - name: Setup fact with partial check result
-  set_fact:
+  ansible.builtin.set_fact:
     cis_partial_check_result_3: "{{ cis_check_result }}"
 
 - name: Setup fact with check description
-  set_fact:
+  ansible.builtin.set_fact:
     cis_check_description: Ensure system is disabled when audit logs are full
 
 - name: "{{ cis_check_description }}"
-  assert:
+  ansible.builtin.assert:
     quiet: "{{ cis_quiet_assertions }}"
     that:
       - cis_partial_check_result_1 is success

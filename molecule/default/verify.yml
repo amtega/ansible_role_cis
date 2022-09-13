@@ -3,5 +3,3 @@
 - name: Verify
   hosts: molecule_hosts
   gather_facts: no
-  tasks:
-    - debug: msg="Verify to be done"

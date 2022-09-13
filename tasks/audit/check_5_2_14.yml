@@ -1,7 +1,7 @@
 ---
 
 - name: Setup fact with check description
-  set_fact:
+  ansible.builtin.set_fact:
     cis_check_description: Ensure SSH access is limited
 
 - name: "{{ cis_check_description }}"
@@ -22,7 +22,7 @@
       {{ cis_sshd_config
       | to_json | from_json
       | json_query('[?starts_with(@, `denygroups`) == `true`]') }}
-  assert:
+  ansible.builtin.assert:
     quiet: "{{ cis_quiet_assertions }}"
     that: >-
       (allowusers | length > 0)

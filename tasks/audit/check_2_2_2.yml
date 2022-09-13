@@ -1,7 +1,7 @@
 ---
 
 - name: Setup fact with check description
-  set_fact:
+  ansible.builtin.set_fact:
     cis_check_description: Ensure X Window System is not installed
 
 - name: "{{ cis_check_description }}"
@@ -11,7 +11,7 @@
          | reject("search", "xorg-x11-font.*")
          | select("search", "xorg-x11-.*")
          | list }}
-  assert:
+  ansible.builtin.assert:
     quiet: "{{ cis_quiet_assertions }}"
     that:
       - x11_installed_packages | length == 0

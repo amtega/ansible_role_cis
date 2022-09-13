@@ -1,6 +1,6 @@
 ---
 
-- include_tasks: ../common/check_param.yml
+- ansible.builtin.include_tasks: ../common/check_param.yml
   vars:
     description: Ensure audit logs are not automatically deleted
     file: /etc/audit/auditd.conf

@@ -1,18 +1,18 @@
 ---
 
 - name: Setup fact with check description
-  set_fact:
+  ansible.builtin.set_fact:
     cis_check_description: Ensure rsyslog default file permissions configured
 
 - name: Gather data to ensure rsyslog default file permissions configured
-  command: >-
+  ansible.builtin.command: >-
     grep "^\$FileCreateMode" /etc/rsyslog.conf /etc/rsyslog.d/*.conf
   changed_when: no
   failed_when: no
   register: cis_gather_rsyslog_perms_result
 
 - name: "{{ cis_check_description }}"
-  assert:
+  ansible.builtin.assert:
     quiet: "{{ cis_quiet_assertions }}"
     that: >-
       cis_gather_rsyslog_perms_result.stdout_lines is cis_good_rsyslog_perms

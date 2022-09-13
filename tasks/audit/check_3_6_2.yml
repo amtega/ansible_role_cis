@@ -1,18 +1,18 @@
 ---
 
 - name: Setup fact with check description
-  set_fact:
+  ansible.builtin.set_fact:
     cis_check_description: Ensure default deny firewall policy
 
 - name: Gather data to to ensure default deny firewall policy
-  command: >-
+  ansible.builtin.command: >-
     /sbin/iptables -L
   changed_when: no
   register: cis_firewall_deny_result
   no_log: "{{ cis_no_log }}"
 
 - name: "{{ cis_check_description }}"
-  assert:
+  ansible.builtin.assert:
     quiet: "{{ cis_quiet_assertions }}"
     that:
       - "'Chain INPUT (policy DROP)' in cis_firewall_deny_result.stdout_lines"

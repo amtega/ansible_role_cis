@@ -1,18 +1,18 @@
 ---
 
 - name: Setup fact with check description
-  set_fact:
+  ansible.builtin.set_fact:
     cis_check_description: Ensure system accounts are non-login
 
 - name: Gather data to to ensure system accounts are non-login
-  slurp:
+  ansible.builtin.slurp:
     src: /etc/passwd
   register: cis_etc_passwd_result
 
 - name: "{{ cis_check_description }}"
   vars:
     etc_passwd_lines: "{{ cis_etc_passwd_result['content'] | b64decode }}"
-  assert:
+  ansible.builtin.assert:
     quiet: "{{ cis_quiet_assertions }}"
     that: >-
       etc_passwd_lines

@@ -7,11 +7,11 @@
 #  files: files to grep
 
 - name: Setup fact with check description
-  set_fact:
+  ansible.builtin.set_fact:
     cis_check_description: "{{ description }}"
 
-- name: "Check {{ pattern }} in {{ files }}" # noqa 305
-  shell: >-
+- name: "Check {{ pattern }} in {{ files }}"  # noqa command-instead-of-shell
+  ansible.builtin.shell: >-
     /usr/bin/grep -E {{ options | default('') }} "{{ pattern }}" {{ files }}
   args:
     warn: no
@@ -20,7 +20,7 @@
   register: cis_gather_data_result
 
 - name: "{{ cis_check_description }}"
-  assert:
+  ansible.builtin.assert:
     quiet: "{{ cis_quiet_assertions }}"
     that:
       - "cis_gather_data_result.stdout | length > 0"

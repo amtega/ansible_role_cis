@@ -1,11 +1,11 @@
 ---
 
 - name: Setup fact with check description
-  set_fact:
+  ansible.builtin.set_fact:
     cis_check_description: "{{ description }}"
 
 - name: "Gather {{ parameter }} from {{ file }}"
-  command: /usr/bin/egrep "^\\s*{{ parameter }}\\s+" {{ file }}
+  ansible.builtin.command: /usr/bin/egrep "^\\s*{{ parameter }}\\s+" {{ file }}
   changed_when: no
   failed_when: no
   register: cis_gather_data_result
@@ -22,7 +22,7 @@
                    cis_gather_data_result.stdout
                    | cis_script_variable_value(
                        delimiter=separator | default("="))) }}
-  assert:
+  ansible.builtin.assert:
     quiet: "{{ cis_quiet_assertions }}"
     that:
       - "current_value | length > 0"

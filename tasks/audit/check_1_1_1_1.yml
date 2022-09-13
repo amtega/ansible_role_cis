@@ -1,6 +1,6 @@
 ---
 
-- include_tasks: ../common/check_kernel_module.yml
+- ansible.builtin.include_tasks: ../common/check_kernel_module.yml
   vars:
     check_filesystem_type: cramfs
   name: "Perform kernel module {{ check_filesystem_type }} check"
