@@ -1,6 +1,6 @@
 ---
 
-- include_tasks: ../common/check_separate_partition.yml
+- ansible.builtin.include_tasks: ../common/check_separate_partition.yml
   vars:
     check_partition_directory: /home
   name: "Perform check {{ cis_audit_item }} / {{ check_partition_directory }}"

@@ -1,14 +1,14 @@
 ---
 
 - name: Setup fact with check description
-  set_fact:
+  ansible.builtin.set_fact:
     cis_check_description: >-
       Ensure inactive password lock is 30 days or less
 
 - name: >-
     Gather data to to ensure inactive password lock is 30 days or less
     - useradd
-  shell: |-
+  ansible.builtin.shell: |-
     set -o pipefail ;
     /sbin/useradd -D | /bin/grep INACTIVE
   changed_when: no
@@ -19,7 +19,7 @@
 - name: >-
     Gather data to to ensure inactive password lock is 30 days or less
     - /etc/shadow
-  shell: |-
+  ansible.builtin.shell: |-
     set -o pipefail ;
     /bin/egrep ^[^:]+:[^\!*] /etc/shadow | /bin/cut -d: -f7
   changed_when: no
@@ -31,16 +31,16 @@
   vars:
     default_expiration: >-
       {{ (cis_useradd_result.stdout
-      | default ('INACTIVE=-1')).split('=')[1] }}
+         | default ('INACTIVE=-1')).split('=')[1] }}
     users_expiration_min: >-
       {{ cis_etc_shadow_result.stdout_lines
-      | default([])
-      | min }}
+         | default([])
+         | min }}
     users_expiration_max: >-
       {{ cis_etc_shadow_result.stdout_lines
-      | default([])
-      | max }}
-  assert:
+         | default([])
+         | max }}
+  ansible.builtin.assert:
     quiet: "{{ cis_quiet_assertions }}"
     that:
       - "default_expiration | int > 0"

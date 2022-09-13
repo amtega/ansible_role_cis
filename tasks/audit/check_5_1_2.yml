@@ -1,18 +1,18 @@
 ---
 
 - name: Setup fact with check description
-  set_fact:
+  ansible.builtin.set_fact:
     cis_check_description: >-
       Ensure permissions on /etc/crontab are configured
 
 - name: Read permissions of /etc/crontab
-  stat:
+  ansible.builtin.stat:
     path: /etc/crontab
   register: cis_stat_etc_crontab_result
   no_log: "{{ cis_no_log }}"
 
 - name: "{{ cis_check_description }}"
-  assert:
+  ansible.builtin.assert:
     quiet: "{{ cis_quiet_assertions }}"
     that: >-
       not cis_stat_etc_crontab_result.stat.exists

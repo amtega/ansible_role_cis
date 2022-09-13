@@ -1,6 +1,6 @@
 ---
 
-- include_tasks: ../common/check_mount_option.yml
+- ansible.builtin.include_tasks: ../common/check_mount_option.yml
   vars:
     check_mount_path: /tmp
     check_mount_option: nodev

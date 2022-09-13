@@ -1,12 +1,12 @@
 ---
 
 - name: Setup fact with check description
-  set_fact:
+  ansible.builtin.set_fact:
     cis_check_description: >-
       Ensure default user shell timeout is 900 seconds or less
 
 - name: Gather TMOUT from /etc/profile and /etc/bashrc
-  shell: |-
+  ansible.builtin.shell: |-
     /usr/bin/grep "^TMOUT" /etc/profile /etc/profile.d/* /etc/bashrc
   changed_when: no
   failed_when: no
@@ -16,7 +16,7 @@
   vars:
     tmout: >-
       {{ cis_gather_data_tmout_result.stdout | cis_script_variable_value }}
-  assert:
+  ansible.builtin.assert:
     quiet: "{{ cis_quiet_assertions }}"
     that:
       - "tmout | length > 0"

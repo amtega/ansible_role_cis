@@ -1,11 +1,11 @@
 ---
 
 - name: Setup fact with check description
-  set_fact:
+  ansible.builtin.set_fact:
     cis_check_description: Ensure core dumps are restricted
 
 - name: Gather data to ensure core dumps are restricted - limits
-  shell: >-
+  ansible.builtin.shell: >-
     set -o pipefail ;
     /usr/bin/grep -E
     '^[^#].*\*.*hard|-.*core.*0'
@@ -18,12 +18,12 @@
   register: cis_gather_data_limits_result
 
 - name: Gather data to ensure core dumps are restricted - sysctl
-  command: /usr/sbin/sysctl fs.suid_dumpable
+  ansible.builtin.command: /usr/sbin/sysctl fs.suid_dumpable
   changed_when: no
   register: cis_gather_data_sysctl_result
 
 - name: Gather data to ensure core dumps are restricted - sysctl.conf
-  shell: >-
+  ansible.builtin.shell: >-
     grep --no-filename
     "fs\.suid_dumpable *= *0"
     /etc/sysctl.conf
@@ -35,7 +35,7 @@
   register: cis_gather_data_sysctl_conf_result
 
 - name: "{{ cis_check_description }}"
-  assert:
+  ansible.builtin.assert:
     quiet: "{{ cis_quiet_assertions }}"
     that:
       - cis_gather_data_limits_result.stdout | length > 0

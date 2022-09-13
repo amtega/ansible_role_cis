@@ -1,12 +1,12 @@
 ---
 
 - name: Setup fact with check description
-  set_fact:
+  ansible.builtin.set_fact:
     cis_check_description: "{{ description }}"
 
 - name: >-
     Gather /etc/sysctl** data - net.{{ protocol }}.conf.all.{{ param_name }}
-  shell: >-
+  ansible.builtin.shell: >-
     /usr/bin/grep
     --no-filename
     "net\.{{ protocol }}\.conf\.all\.{{ param_name }}"
@@ -20,7 +20,7 @@
 
 - name: >-
     Gather /etc/sysctl** data - net.{{ protocol }}.conf.default.{{ param_name }}
-  shell: >-
+  ansible.builtin.shell: >-
     /usr/bin/grep
     --no-filename
     "net\.{{ protocol }}\.conf\.default\.{{ param_name }}"
@@ -49,7 +49,7 @@
       {{ cis_gather_data_etc_sysctl_default_result.stdout_lines
          | map("regex_replace", "(.*) *= *(.*)", "\1 = \2")
          | list }}
-  assert:
+  ansible.builtin.assert:
     quiet: "{{ cis_quiet_assertions }}"
     that:
       - desired_output_all in cis_kernel_params

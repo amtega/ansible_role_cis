@@ -1,11 +1,12 @@
 ---
 
 - name: Setup fact with check description
-  set_fact:
+  ansible.builtin.set_fact:
     cis_check_description: Ensure /etc/hosts.deny is configured
 
 - name: "Gather content from /etc/hosts.deny"
-  command: /usr/bin/egrep "^\\s*ALL\\s*:\\s*ALL\\s*$" /etc/hosts.deny
+  ansible.builtin.command: >-
+    /usr/bin/egrep "^\\s*ALL\\s*:\\s*ALL\\s*$" /etc/hosts.deny
   changed_when: no
   failed_when: no
   register: cis_gather_data_result
@@ -14,8 +15,8 @@
   vars:
     trimmed_value: >-
       {{ cis_gather_data_result.stdout
-      | regex_replace('\s+', '' ) }}
-  assert:
+         | regex_replace('\s+', '' ) }}
+  ansible.builtin.assert:
     quiet: "{{ cis_quiet_assertions }}"
     that:
       - "trimmed_value | length > 0"

@@ -1,6 +1,6 @@
 ---
 
-- include_tasks: ../common/check_grep.yml
+- ansible.builtin.include_tasks: ../common/check_grep.yml
   vars:
     description: >-
       Ensure rsyslog is configured to send logs to a remote log host

@@ -1,17 +1,18 @@
 ---
-# Role tasks
 
-- environment:
+
+- name: Perform cis check
+  environment:
     PATH: "{{ ansible_env.PATH }}:/usr/sbin:/sbin"
     # Ensure default english language
-    LANG:
+    LANGUAGE: en_US
   block:
     - name: Setup fact with supported audit checks
-      set_fact:
+      ansible.builtin.set_fact:
         cis_supported_audit_checks_fact: "{{ cis_supported_audit_checks }}"
 
     - name: Gather kernel parameters
-      command: "{{ cis_sysctl_command }} -a"
+      ansible.builtin.command: "{{ cis_sysctl_ansible.builtin.command }} -a"
       changed_when: no
       register: cis_sysctl_result
       vars:
@@ -20,7 +21,7 @@
              | ternary("/usr/sbin/sysctl", "/sbin/sysctl") }}
 
     - name: Setup fact with kernel parameters
-      set_fact:
+      ansible.builtin.set_fact:
         cis_kernel_params: "{{ cis_sysctl_result.stdout_lines }}"
 
     - name: Gather kernel modules
@@ -28,32 +29,32 @@
         cis_lsmod_command: >-
           {{ (ansible_facts.distribution_major_version is version("7", ">="))
           | ternary("/usr/sbin/lsmod", "/sbin/lsmod") }}
-      command: "{{ cis_lsmod_command }}"
+      ansible.builtin.command: "{{ cis_lsmod_command }}"
       changed_when: no
       register: cis_lsmod_result
 
     - name: Setup fact with kernel modules
-      set_fact:
+      ansible.builtin.set_fact:
         cis_kernel_modules: "{{ cis_lsmod_result.stdout_lines }}"
 
     - name: Gather sshd configuration
-      command: /usr/sbin/sshd -T
+      ansible.builtin.command: /usr/sbin/sshd -T
       changed_when: no
       register: cis_sshd_config_result
 
     - name: Setup fact with sshd configuration
-      set_fact:
+      ansible.builtin.set_fact:
         cis_sshd_config: "{{ cis_sshd_config_result.stdout_lines }}"
 
     - name: Gather service facts
-      service_facts:
+      ansible.builtin.service_facts:
 
     - name: Gather package facts
-      package_facts:
+      ansible.builtin.package_facts:
 
-    - block:
-        - name: Run audit tasks
-          include_tasks: run_check.yml
+    - name: Run audit tasks   # noqa ignore-errors
+      block:
+        - ansible.builtin.include_tasks: run_check.yml
           loop: "{{ cis_audit | sort }}"
           loop_control:
             loop_var: cis_audit_item

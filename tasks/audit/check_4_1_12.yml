@@ -1,12 +1,12 @@
 ---
 
 - name: Setup fact with check description
-  set_fact:
+  ansible.builtin.set_fact:
     cis_check_description: >-
       Ensure use of privileged commands is collected
 
 - name: Gather privileged commands rules
-  shell: >-
+  ansible.builtin.shell: >-
     set -o pipefail ;
     find {{ partition }}
     -xdev \( -perm -4000 -o -perm -2000 \)
@@ -26,7 +26,7 @@
       -F auid!=4294967295 -k privileged" }'
 
 - name: Gather data from audit.rules and /etc/audit/rules.d/*.rules
-  shell: cat /etc/audit/audit.rules /etc/audit/rules.d/*.rules
+  ansible.builtin.shell: cat /etc/audit/audit.rules /etc/audit/rules.d/*.rules
   args:
     warn: no
   changed_when: no
@@ -40,7 +40,7 @@
          | map(attribute="stdout_lines")
          | sum(start=[])
          | list }}
-  assert:
+  ansible.builtin.assert:
     quiet: "{{ cis_quiet_assertions }}"
     that:
       - cis_gather_data_audit_rules_result.stdout | length > 0

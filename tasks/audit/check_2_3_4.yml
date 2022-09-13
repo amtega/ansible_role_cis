@@ -1,6 +1,6 @@
 ---
 
-- include_tasks: ../common/check_installed_package.yml
+- ansible.builtin.include_tasks: ../common/check_installed_package.yml
   vars:
     package: telnet
     present: no
